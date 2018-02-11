@@ -1,0 +1,5 @@
+Assumptions made:
+
+phone numbers and emails are not required for users
+Different admins have different permission levels
+Different board members have different permission levels
