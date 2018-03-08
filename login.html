@@ -11,19 +11,19 @@
 <body>
 
 <div class="container" align="center">
-		<img class="mb-4" src="/Users/ryanhancock/Desktop/CarawayLogo.png" alt="" align="middle" width="156" height="156">
+		<img class="mb-4" src="/assets/CarawayLogo.png" alt="" align="middle" width="156" height="156">
   <h2>Please Sign In</h2>
-  <form>
+  <form id="loginform" action="/logincheck" method="post">
     <div class="form-group">
       <label for="usr">Name:</label>
-      <input type="text" class="form-control" id="usr" style="width: 150px;">
+      <input type="text" class="form-control" name="usr" style="width: 150px;">
     </div>
     <div class="form-group">
       <label for="pwd">Password:</label>
-      <input type="password" class="form-control" id="pwd" style="width: 150px;">
+      <input type="password" class="form-control" name="pwd" style="width: 150px;">
     </div>
   </form>
-  <button type="button" class="btn btn-primary">Submit</button>
+  <button type="submit" form="loginform" class="btn btn-primary">Submit</button>
 </div>
 
 </body>
