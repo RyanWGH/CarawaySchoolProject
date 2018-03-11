@@ -16,7 +16,8 @@ CREATE TABLE users (
   firstName text NOT NULL,
   lastName text NOT NULL,
   phone text NOT NULL,
-  email text NOT NULL
+  email text NOT NULL,
+  pword text NOT NULL
 );
 
 CREATE TABLE familyUnits (
@@ -130,158 +131,158 @@ VALUES (5);
 --<lastName>@email.ca is used, any connection to a real email is accidental
 
 --Family Members & Admin & Board 
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Arun', 'Roberson', '7805550110', 'Roberson@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Arun', 'Roberson', '7805550110', 'Roberson@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (1,1);
 INSERT INTO boards (userId, boardLevel)
 VALUES (1,1);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Mehdi', 'Rubio', '7805550110', 'Rubio@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Mehdi', 'Rubio', '7805550110', 'Rubio@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (2,2);
 INSERT INTO boards (userId, boardLevel)
 VALUES (2,2);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Bryony', 'Meza', '7805550110', 'Meza@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Bryony', 'Meza', '7805550110', 'Meza@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (3,3);
 INSERT INTO boards (userId, boardLevel)
 VALUES (3,3);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Hermione', 'Curran', '7805550110', 'Curran@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Hermione', 'Curran', '7805550110', 'Curran@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (4,1);
 INSERT INTO boards (userId, boardLevel)
 VALUES (4,1);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Mairead', 'Mack', '7805550110', 'Mack@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Mairead', 'Mack', '7805550110', 'Mack@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (5,2);
 INSERT INTO boards (userId, boardLevel)
 VALUES (5,2);
 
 --Family Members & Admin
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Charlize', 'Sherman', '7805550110', 'Sherman@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Charlize', 'Sherman', '7805550110', 'Sherman@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (6,3);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Cydney', 'Sweet', '7805550110', 'Sweet@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Cydney', 'Sweet', '7805550110', 'Sweet@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (7,1);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Arjan', 'Quintana', '7805550110', 'Quintana@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Arjan', 'Quintana', '7805550110', 'Quintana@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (8,2);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Ayyan', 'Gillespie', '7805550110', 'Gillespie@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Ayyan', 'Gillespie', '7805550110', 'Gillespie@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (9,3);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Asmaa', 'Livingston', '7805550110', 'Livingston@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Asmaa', 'Livingston', '7805550110', 'Livingston@email.ca', '1234');
 INSERT INTO admins (userId, adminLevel)
 VALUES (10,1);
 
 --Family Members & Board members
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Kris', 'Mcguire', '7805550110', 'Mcguire@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Kris', 'Mcguire', '7805550110', 'Mcguire@email.ca', '1234');
 INSERT INTO boards (userId, boardLevel)
 VALUES (11,3);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Evan', 'Snyder', '7805550110', 'Snyder@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Evan', 'Snyder', '7805550110', 'Snyder@email.ca', '1234');
 INSERT INTO boards (userId, boardLevel)
 VALUES (12,1);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Daisy-Mae', 'Nicholson', '7805550110', 'Nicholson@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Daisy-Mae', 'Nicholson', '7805550110', 'Nicholson@email.ca', '1234');
 INSERT INTO boards (userId, boardLevel)
 VALUES (13,2);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Iosif', 'Greenaway', '7805550110', 'Greenaway@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Iosif', 'Greenaway', '7805550110', 'Greenaway@email.ca', '1234');
 INSERT INTO boards (userId, boardLevel)
 VALUES (14,3);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Willow', 'Romero', '7805550110', 'Romero@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Willow', 'Romero', '7805550110', 'Romero@email.ca', '1234');
 INSERT INTO boards (userId, boardLevel)
 VALUES (15,1);
 
 --Family Members & Teachers
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Lillie-Mai', 'Matthams', '7805550110', 'Matthams@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Lillie-Mai', 'Matthams', '7805550110', 'Matthams@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (16);
 INSERT INTO teacherRooms (teacherId, roomId)
 VALUES (1,1);
 
 --Family Members
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Kareena', 'Horton', '7805550110', 'Horton@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Cadence', 'Lane', '7805550110', 'Lane@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Mika', 'Mercer', '7805550110', 'Mercer@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Iwan', 'Graves', '7805550110', 'Graves@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Bernice', 'Castaneda', '7805550110', 'Castaneda@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Kezia', 'Scott', '7805550110', 'Scott@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Samson', 'Saunders', '7805550110', 'Saunders@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Yasser', 'Valentine', '7805550110', 'Valentine@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Macaulay', 'Lamb', '7805550110', 'Lamb@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Carlo', 'Valdez', '7805550110', 'Valdez@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Chase', 'Davison', '7805550110', 'Davison@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Felix', 'Malone', '7805550110', 'Malone@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Stevie', 'Milner', '7805550110', 'Milner@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Sharna', 'Snyder', '7805550110', 'Snyder@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Alexis', 'Sparrow', '7805550110', 'Sparrow@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Kylie', 'Gilmore', '7805550110', 'Gilmore@email.ca');
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Keagan', 'Gregory', '7805550110', 'Gregory@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Kareena', 'Horton', '7805550110', 'Horton@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Cadence', 'Lane', '7805550110', 'Lane@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Mika', 'Mercer', '7805550110', 'Mercer@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Iwan', 'Graves', '7805550110', 'Graves@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Bernice', 'Castaneda', '7805550110', 'Castaneda@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Kezia', 'Scott', '7805550110', 'Scott@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Samson', 'Saunders', '7805550110', 'Saunders@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Yasser', 'Valentine', '7805550110', 'Valentine@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Macaulay', 'Lamb', '7805550110', 'Lamb@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Carlo', 'Valdez', '7805550110', 'Valdez@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Chase', 'Davison', '7805550110', 'Davison@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Felix', 'Malone', '7805550110', 'Malone@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Stevie', 'Milner', '7805550110', 'Milner@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Sharna', 'Snyder', '7805550110', 'Snyder@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Alexis', 'Sparrow', '7805550110', 'Sparrow@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Kylie', 'Gilmore', '7805550110', 'Gilmore@email.ca', '1234');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Keagan', 'Gregory', '7805550110', 'Gregory@email.ca', '1234');
 
 --Teachers 
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Hywel', 'Molloy', '7805550110', 'Molloy@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Hywel', 'Molloy', '7805550110', 'Molloy@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (34);
 INSERT INTO teacherRooms (teacherId, roomId)
 VALUES (2,2);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Justin', 'Easton', '7805550110', 'Easton@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Justin', 'Easton', '7805550110', 'Easton@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (35);
 INSERT INTO teacherRooms (teacherId, roomId)
 VALUES (3,3);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Zainab', 'Mckinney', '7805550110', 'Mckinney@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Zainab', 'Mckinney', '7805550110', 'Mckinney@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (36);
 INSERT INTO teacherRooms (teacherId, roomId)
 VALUES (4,4);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Leoni', 'Kirkpatrick', '7805550110', 'Kirkpatrick@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Leoni', 'Kirkpatrick', '7805550110', 'Kirkpatrick@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (37);
 INSERT INTO teacherRooms (teacherId, roomId)
 VALUES (5,5);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Aneesah', 'Bird', '7805550110', 'Bird@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Aneesah', 'Bird', '7805550110', 'Bird@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (38);
 INSERT INTO teacherRooms (teacherId, roomId)
 VALUES (6,1);
-INSERT INTO users (firstName, lastName, phone, email)
-VALUES ('Darrell', 'Velasquez', '7805550110', 'Velasquez@email.ca');
+INSERT INTO users (firstName, lastName, phone, email, pword)
+VALUES ('Darrell', 'Velasquez', '7805550110', 'Velasquez@email.ca', '1234');
 INSERT INTO teachers (userId)
 VALUES (39);
 INSERT INTO teacherRooms (teacherId, roomId)
