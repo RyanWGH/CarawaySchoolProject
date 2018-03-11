@@ -10,20 +10,21 @@
 </head>
 <body>
 
-<div class="container" align="center">
-		<img class="mb-4" src="/Users/ryanhancock/Desktop/CarawayLogo.png" alt="" align="middle" width="156" height="156">
+<form class="container" action="/Testing" align="center" method="get" id="loginform">
+		<img class="mb-4" src="CarawayLogo.png" alt="" align="middle" width="156" height="156">
   <h2>Please Sign In</h2>
   <form>
-    <div class="form-group">
+    <div class="form-group" align="center">
       <label for="usr">Name:</label>
-      <input type="text" class="form-control" id="usr" style="width: 150px;">
+      <input type="text" class="form-control" id="usr" name="UserName" form="loginform" style="width: 150px;">
     </div>
-    <div class="form-group">
+    <div class="form-group" align="center">
       <label for="pwd">Password:</label>
-      <input type="password" class="form-control" id="pwd" style="width: 150px;">
+      <input type="password" class="form-control" id="pwd" name="Password" form="loginform" style="width: 150px;">
     </div>
   </form>
-  <button type="button" class="btn btn-primary">Submit</button>
+    <div align="center">
+  <button type="submit" form="loginform" value="Submit" class="btn btn-primary">Submit</button>
 </div>
 
 </body>
