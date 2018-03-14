@@ -10,21 +10,22 @@
 </head>
 <body>
 
-<div class="container">
-  <h2>Please Sign In</h2>
+<form class="container" action="/Testing" method="get" id="Registerform">
+  <h2>Time Slot: Select Time</h2>
   <form>
     <div class="form-group">
-      <label for="usr">Name:</label>
-      <input type="text" class="form-control" id="usr" style="width: 150px;">
-    </div>
-    <div class="form-group">
-      <label for="pwd">Password:</label>
-      <input type="password" class="form-control" id="pwd" style="width: 150px;">
+      <label for="Facilitator">Facilitator (select one):</label>
+      <select class="form-control" id="Facilitator" name="Facilitator" form="Registerform" style="width: 150px;">
+		  	<option>James</option>
+			<option>Ryan</option>
+			<option>Oliver</option>
+			<option>Person4</option>
+	  </select>
     </div>
   </form>
-  <button type="button" class="btn btn-primary">Submit</button>
+    <div>
+  <button type="submit" form="Registerform" value="Submit" class="btn btn-primary">Submit</button>
 </div>
-
 </body>
 </html>
 </div>
