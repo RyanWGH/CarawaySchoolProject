@@ -1,8 +1,4 @@
-DROP DATABASE IF EXISTS facilitationsystem;
-
-CREATE DATABASE facilitationsystem;
-
-\c facilitationsystem
+﻿
 
 CREATE TABLE rooms (
   roomId serial PRIMARY KEY,
@@ -34,7 +30,7 @@ CREATE TABLE familyUnits (
   monthlyDonation float,  	--Hours gained through donation
   yearlyHours float,		--Hours gained through facilitation
   yearlyHoursDonated float,	--Hours given to another family
-  yearlyDonation float,  	--Hours gained through donation
+  yearlyDonation float  	--Hours gained through donation
 );
 
 CREATE TABLE familyMembers (

@@ -4,18 +4,18 @@
 
 ## Team Members
 * Carlos
-* Catrina 
-* Oliver 
+* Catrina
+* Oliver
 * Ryan
 * Todd
 
 ## Project Outline
 
 ### Background
-From their website: 
+From their website:
 > "Caraway is an alternative K–9 program with project-based and child-centred
-> learning, committed to actively connecting family, school, and society." 
-> (Caraway School, 2017) 
+> learning, committed to actively connecting family, school, and society."
+> (Caraway School, 2017)
 
 The school is divided into classrooms of grouped ages:
 
@@ -46,7 +46,7 @@ students.
 Board members get an automatic 5 hour facilitation credit per month. They are however still expected
 to facilitate through the month.
 
-### Current System 
+### Current System
 The current system for tracking facilitation involves Excel document templates for each week, for each
 classroom. These are printed and posted to a designated wall
 at the school. There are three time slots (morning, lunch & afternoon) and a designated number of ideal
@@ -103,11 +103,23 @@ completing their minimum hours for each week.
 Families can also donate extra hours to other families who haven’t been able to complete their
 facilitation. This is done ad hoc by the families.
 
-## Languages Used 
+## Languages Used
 * Node
-* HTML
-* css
-* postreSQL
+* HTML/CSS/JS
+* postgreSQL
+
+## How to run
+- Install node.js 8.x LTS
+- Install some sort of postgres DB
+- On the command line, install the following node packages in this repo's directory:
+  - `npm install cookie`
+  - `npm install pg`
+- Run the server by `cd`ing to the repo's directory and using the following command:
+  - `node server.js`
+  - You might need to add environment variables depending on your postgres installation. On Command Prompt (Windows) I had to use a command like this:
+  - ` set PGUSER=postgres&& set PGDATABASE=facilitationsystem&& set PGPASSWORD=orange&& set PGPORT=5433&& node server.js`
+  - See htps://node-postgres.com/features/connecting for info on this
+ 
 
 ## External Tools
 * Moqup
