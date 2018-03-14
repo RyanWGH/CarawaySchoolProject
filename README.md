@@ -118,6 +118,7 @@ facilitation. This is done ad hoc by the families.
   - `node server.js`
   - You might need to add environment variables depending on your postgres installation. On Command Prompt (Windows) I had to use a command like this:
   - ` set PGUSER=postgres&& set PGDATABASE=facilitationsystem&& set PGPASSWORD=orange&& set PGPORT=5433&& node server.js`
+  - See htps://node-postgres.com/features/connecting for info on this
  
 
 ## External Tools
