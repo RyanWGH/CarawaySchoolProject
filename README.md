@@ -105,9 +105,20 @@ facilitation. This is done ad hoc by the families.
 
 ## Languages Used
 * Node
-* HTML
-* css
+* HTML/CSS/JS
 * postgreSQL
+
+## How to run
+- Install node.js 8.x LTS
+- Install some sort of postgres DB
+- On the command line, install the following node packages in this repo's directory:
+ - `npm install cookie`
+ - `npm install pg`
+- Run the server by `cd`ing to the repo's directory and using the following command:
+ - `node server.js`
+ - You might need to add environment variables depending on your postgres installation. On Command Prompt (Windows) I had to use a command like this:
+ - ` set PGUSER=postgres&& set PGDATABASE=facilitationsystem&& set PGPASSWORD=orange&& set PGPORT=5433&& node server.js`
+ 
 
 ## External Tools
 * Moqup
