@@ -15,13 +15,21 @@ const SECRET = "orange!";
 const LOGIN_PAGE = "/html/login";
 const MAIN_PAGE = role => `/${role}/main`;
 const DONATE_PAGE = role => `/${role}/donate`;
-const SCHEDULE_PAGE = role => `/${role}/schedule`;
+const DAY_PAGE = role => `/${role}/DaySchedule`;
+const MONTH_PAGE = role => `/${role}/monthSchedule`;
 const REQUESTS_PAGE = role => `/${role}/requests`;
 const CONTACT_PAGE = role => `/${role}/contact`;
+const WEEK_STATS_PAGE = role => `/${role}/weekStats`;
+const TOTAL_STATS_PAGE = role => `/${role}/totalStats`;
 
-const endpoints = {
+const generalEndpoints = {
   "/": (req, res, role) => {
-    serveFile(req, res, MAIN_PAGE(role));
+    if (role) {
+      console.log(role);
+      serveFile(req, res, MAIN_PAGE(role));
+    } else {
+      serveFile(req, res, LOGIN_PAGE);
+    }
     return 1;
   },
 
@@ -30,29 +38,7 @@ const endpoints = {
     return 1;
   },
 
-  "/donate": (req, res, role) => {
-    serveFile(req, res, DONATE_PAGE(role));
-    return 1;
-  },
-
-  "/schedule": (req, res, role) => {
-    serveFile(req, res, SCHEDULE_PAGE(role));
-    return 1;
-  },
-
-  "/requests": (req, res, role) => {
-    serveFile(req, res, REQUESTS_PAGE(role));
-    return 1;
-  },
-
-  "/contact": (req, res, role) => {
-    serveFile(req, res, CONTACT_PAGE(role));
-    return 1;
-  },
-
   "/login": (req, res) => {
-    console.log("reached /login endpoint");
-
     let cookies = cookie.parse(req.headers.cookie || "");
     let sessionID = cookies.sessionID;
 
@@ -75,8 +61,7 @@ const endpoints = {
     return 1;
   },
 
-  "/logincheck": (req, res, role) => {
-
+  "/logincheck": (req, res) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -121,7 +106,7 @@ const endpoints = {
     return 1;
   },
 
-  "/logout": (req, res, role) => {
+  "/logout": (req, res) => {
     let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
 
     db.query("UPDATE users SET sessionid = null WHERE sessionid = $1", [sessionID], (err) => {
@@ -134,6 +119,84 @@ const endpoints = {
       res.end();
     });
 
+    return 1;
+  }
+};
+
+const userEndpoints = {
+  "/user": (req, res, role) => {
+    serveFile(req, res, MAIN_PAGE(role));
+    return 1;
+  },
+
+  "/donate": (req, res, role) => {
+    serveFile(req, res, DONATE_PAGE(role));
+    return 1;
+  },
+
+  "/DaySchedule": (req, res, role) => {
+    serveFile(req, res, DAY_PAGE(role));
+    return 1;
+  },
+
+  "/requests": (req, res, role) => {
+    serveFile(req, res, REQUESTS_PAGE(role));
+    return 1;
+  },
+
+  "/contact": (req, res, role) => {
+    serveFile(req, res, CONTACT_PAGE(role));
+    return 1;
+  },
+
+  "/monthSchedule": (req, res, role) => {
+    serveFile(req, res, MONTH_PAGE(role));
+    return 1;
+  }
+};
+
+const teacherEndpoints = {
+  "/teacher": (req, res, role) => {
+    serveFile(req, res, MAIN_PAGE(role));
+    return 1;
+  },
+
+  "/DaySchedule": (req, res, role) => {
+    serveFile(req, res, DAY_PAGE(role));
+    return 1;
+  }
+};
+
+const boardEndpoints = {
+  "/board": (req, res, role) => {
+    serveFile(req, res, MAIN_PAGE(role));
+    return 1;
+  }
+};
+
+const adminEndpoints = {
+  "/admin": (req, res, role) => {
+    serveFile(req, res, MAIN_PAGE(role));
+    return 1;
+  },
+
+  "/DaySchedule": (req, res, role) => {
+    serveFile(req, res, DAY_PAGE(role));
+    return 1;
+  },
+
+  "/monthSchedule": (req, res, role) => {
+    serveFile(req, res, MONTH_PAGE(role));
+    return 1;
+  },
+
+  "/totalStats": (req, res, role) => {
+    serveFile(req, res, TOTAL_STATS_PAGE(role));
+    return 1;
+  },
+
+  "/weekStats": (req, res, role) => {
+    serveFile(req, res, WEEK_STATS_PAGE(role));
     return 1;
   }
 };
@@ -154,7 +217,6 @@ function serveFile(req, res, pathname) {
     fs.readFile(path, (err, data) => {
       if (err) {
         res.statusCode = 500;
-        console.log(path);
         res.end(`Error getting file: ${path}`);
       } else {
         res.end(data);
@@ -231,11 +293,45 @@ function lookupSession(req, res, id, callback) {
 }
 
 function handleEndpoint(req, res, endpoint, role) {
-  if (endpoint in endpoints) {
-    let status = endpoints[endpoint](req, res, role);
+  let status = 0;
+
+  if (endpoint in generalEndpoints) {
+    status = generalEndpoints[endpoint](req, res, role);
     if (status) {
       return;
     }
+  }
+
+  switch (role) {
+    case "admin":
+      if (endpoint in adminEndpoints) {
+        status = adminEndpoints[endpoint](req, res, role);
+      }
+      break;
+    case "board":
+      if (endpoint in boardEndpoints) {
+        status = boardEndpoints[endpoint](req, res, role);
+      }
+      break;
+    case "teacher":
+      if (endpoint in teacherEndpoints) {
+        status = teacherEndpoints[endpoint](req, res, role);
+      }
+      break;
+    case "user":
+      if (endpoint in teacherEndpoints) {
+        status = userEndpoints[endpoint](req, res, role);
+      }
+      break;
+    default:
+      if (endpoint in generalEndpoints) {
+        status = generalEndpoints[endpoint](req, res, role);
+      }
+      break;
+  }
+
+  if (status) {
+    return;
   }
 
   serveFile(req, res, endpoint);
