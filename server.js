@@ -157,6 +157,33 @@ const userEndpoints = {
   "/contact": (req, res, role) => {
     serveFile(req, res, CONTACT_PAGE(role));
     return 1;
+  },
+
+  "/addfacilitator": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession) => {
+      if (!validSession) {
+        console.log("invalid session trying to sign up");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        console.log(data);
+        res.end(JSON.stringify(data));
+      });
+    });
+
+    return 1;
   }
 };
 
