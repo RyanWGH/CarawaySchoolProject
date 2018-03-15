@@ -241,6 +241,7 @@ Main Components
     height: auto;
     max-width: none;
     margin-right: 0;
+    outline-style: solid;
   }
   .cd-schedule .events .single-event a {
     padding: 1.2em;
