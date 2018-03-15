@@ -319,7 +319,7 @@ function handleEndpoint(req, res, endpoint, role) {
       }
       break;
     case "user":
-      if (endpoint in teacherEndpoints) {
+      if (endpoint in userEndpoints) {
         status = userEndpoints[endpoint](req, res, role);
       }
       break;
