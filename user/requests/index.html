@@ -14,7 +14,7 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="/main">Caraway</a>
     </div>
-    <ul class="nav navbar-nav">
+    <ul class="nav navbar-nav navbar-left">
       <li><a href="/main">Home</a></li>
       <li><a href="/monthSchedule">Schedule</a></li>
       <li><a href="/donate">Donate Hours</a></li>
@@ -28,18 +28,16 @@
   </div>
 </nav>
 
-<div class="container" align=center>
-	<div class="dropdown">
-	    <span class="caret"></span></button>
-	    <ul class="dropdown-menu">
-	      <li><a href="#">01</a></li>
-	      <li><a href="#">02</a></li>
-	      <li><a href="#">03</a></li>
-	      <li><a href="#">04</a></li>
-	      <li><a href="#">05</a></li>
-	    </ul>
-	  </div>
-</div>
+<p>
+</p>
+<form class="form-inline" align=center action="/action_page.php" method="get" id="DonateHours">
+	<div class="form-group" align=center>
+  To: <input type="date" name="ToDate" class="form-control" form="DonateHours" style="width: 200px;" display=inline> 
+  From: <input type="date" name="FromDate" class="form-control" form="DonateHours" style="width: 200px;"> 
+  <button type="submit" form="DonateHours" value="Submit" class="btn btn-primary">Submit</button>
+</form>
+
+<p><strong>Note:</strong> type="date" is not supported in Internet Explorer 11 and earlier versions.</p>
 
 </body>
 </html>
