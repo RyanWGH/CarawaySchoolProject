@@ -12,7 +12,7 @@ db.connect();
 
 const ALGORITHM = "aes192";
 const SECRET = "orange!";
-const LOGIN_PAGE = "/login";
+const LOGIN_PAGE = "/html/login";
 const MAIN_PAGE = role => `/${role}/main`;
 const DONATE_PAGE = role => `/${role}/donate`;
 const SCHEDULE_PAGE = role => `/${role}/schedule`;
@@ -143,7 +143,7 @@ function serveFile(req, res, pathname) {
   fs.exists(path, (exist) => {
     if (!exist) {
       res.statusCode = 404;
-      res.end("File not found");
+      res.end(`File not found: ${path}`);
       return;
     }
 
@@ -155,7 +155,7 @@ function serveFile(req, res, pathname) {
       if (err) {
         res.statusCode = 500;
         console.log(path);
-        res.end("Error getting file");
+        res.end(`Error getting file: ${path}`);
       } else {
         res.end(data);
       }
