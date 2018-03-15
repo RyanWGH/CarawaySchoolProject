@@ -152,6 +152,11 @@ const userEndpoints = {
   "/monthSchedule": (req, res, role) => {
     serveFile(req, res, MONTH_PAGE(role));
     return 1;
+  },
+
+  "/contact": (req, res, role) => {
+    serveFile(req, res, CONTACT_PAGE(role));
+    return 1;
   }
 };
 
