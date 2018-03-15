@@ -12,41 +12,41 @@ db.connect();
 
 const ALGORITHM = "aes192";
 const SECRET = "orange!";
-const LOGIN_PAGE = "/html/login";
-const MAIN_PAGE = "/html/main";
-const DONATE_PAGE = "/html/donate";
-const SCHEDULE_PAGE = "/html/schedule";
-const REQUESTS_PAGE = "/html/requests";
-const CONTACT_PAGE = "/html/contact";
+const LOGIN_PAGE = "/login";
+const MAIN_PAGE = role => `/${role}/main`;
+const DONATE_PAGE = role => `/${role}/donate`;
+const SCHEDULE_PAGE = role => `/${role}/schedule`;
+const REQUESTS_PAGE = role => `/${role}/requests`;
+const CONTACT_PAGE = role => `/${role}/contact`;
 
 const endpoints = {
-  "/": (req, res) => {
-    serveFile(req, res, MAIN_PAGE);
+  "/": (req, res, role) => {
+    serveFile(req, res, MAIN_PAGE(role));
     return 1;
   },
 
-  "/main": (req, res) => {
-    serveFile(req, res, MAIN_PAGE);
+  "/main": (req, res, role) => {
+    serveFile(req, res, MAIN_PAGE(role));
     return 1;
   },
 
-  "/donate": (req, res) => {
-    serveFile(req, res, DONATE_PAGE);
+  "/donate": (req, res, role) => {
+    serveFile(req, res, DONATE_PAGE(role));
     return 1;
   },
 
-  "/schedule": (req, res) => {
-    serveFile(req, res, SCHEDULE_PAGE);
+  "/schedule": (req, res, role) => {
+    serveFile(req, res, SCHEDULE_PAGE(role));
     return 1;
   },
 
-  "/requests": (req, res) => {
-    serveFile(req, res, REQUESTS_PAGE);
+  "/requests": (req, res, role) => {
+    serveFile(req, res, REQUESTS_PAGE(role));
     return 1;
   },
 
-  "/contact": (req, res) => {
-    serveFile(req, res, CONTACT_PAGE);
+  "/contact": (req, res, role) => {
+    serveFile(req, res, CONTACT_PAGE(role));
     return 1;
   },
 
@@ -75,7 +75,7 @@ const endpoints = {
     return 1;
   },
 
-  "/logincheck": (req, res) => {
+  "/logincheck": (req, res, role) => {
 
     let body = '';
     req.on("data", (data) => {
@@ -121,7 +121,7 @@ const endpoints = {
     return 1;
   },
 
-  "/logout": (req, res) => {
+  "/logout": (req, res, role) => {
     let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
 
     db.query("UPDATE users SET sessionid = null WHERE sessionid = $1", [sessionID], (err) => {
@@ -133,7 +133,7 @@ const endpoints = {
       res.statusCode = 302;
       res.end();
     });
-    
+
     return 1;
   }
 };
@@ -187,9 +187,42 @@ function lookupSession(req, res, id, callback) {
       console.log(err.stack);
       callback(false);
     } else {
-      if (result.rows[0]) {
-        console.log("session is valid!");
-        callback(true);
+      let user = result.rows[0];
+      if (user) {
+        db.query("SELECT * FROM admins WHERE userid = $1", [user.userid], (err, adminRes) => {
+          if (err) {
+            console.log(err.stack);
+            callback(false);
+          } else {
+            if (adminRes.rows[0]) {
+              callback(true, "admin");
+            } else {
+              db.query("SELECT * FROM boards WHERE userid = $1", [user.userid], (err, boardRes) => {
+                if (err) {
+                  console.log(err.stack);
+                  callback(false);
+                } else {
+                  if (boardRes.rows[0]) {
+                    callback(true, "board");
+                  } else {
+                    db.query("SELECT * FROM teachers WHERE userid = $1", [user.userid], (err, teacherRes) => {
+                      if (err) {
+                        console.log(err.stack);
+                        callback(false);
+                      } else {
+                        if (teacherRes.rows[0]) {
+                          callback(true, "teacher");
+                        } else {
+                          callback(true, "user");
+                        }
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          }
+        });
       } else {
         callback(false);
       }
@@ -197,9 +230,9 @@ function lookupSession(req, res, id, callback) {
   });
 }
 
-function handleEndpoint(req, res, endpoint) {
+function handleEndpoint(req, res, endpoint, role) {
   if (endpoint in endpoints) {
-    let status = endpoints[endpoint](req, res);
+    let status = endpoints[endpoint](req, res, role);
     if (status) {
       return;
     }
@@ -228,9 +261,9 @@ http.createServer((req, res) => {
   }
 
   else if (sessionID && sessionID.length > 0) {
-    lookupSession(req, res, sessionID, (validSession) => {
+    lookupSession(req, res, sessionID, (validSession, role) => {
       if (validSession) {
-        handleEndpoint(req, res, endpoint);
+        handleEndpoint(req, res, endpoint, role);
       } else {
         res.setHeader('Set-Cookie', '');
         res.statusCode = 302;
