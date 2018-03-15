@@ -1,0 +1,20 @@
+{
+  "name": "w18orange",
+  "version": "1.0.0",
+  "description": "Caraway Facilitation System (Team Orange)",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "null"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie": "^0.3.1",
+    "pg": "^7.4.1"
+  }
+}

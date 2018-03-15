@@ -1,0 +1,7 @@
+Assumptions made:
+
+phone numbers and emails are required for users
+Different admins have different permission levels
+Different board members have different permission levels
+Rooms can have more than one teacher
+A teacher can be assigned to more than one room 
