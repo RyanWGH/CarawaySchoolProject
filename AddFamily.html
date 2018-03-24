@@ -3,6 +3,9 @@
 <head>
   <title>Donate Hours - Caraway Facilitation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+	  label {display: inline;}
+	  </style>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -28,30 +31,15 @@
   </div>
 </nav>
 
-
-<form class="container" action="/Testing" method="get" id="Donateform" align="center">
-  <p>Which family would you like to donate hours to?</p>
-  <form>
-    <div class="form-group" align=center>  
-    <label for="Family">Family (select one):</label>
-	<select class="form-control" id="Family" name="Family" 	form="Donateform" style="width: 150px;">		
-		<option>Hancock</option>
-		<option>Whitely</option>
-		<option>Smith</option>
-		<option>Leblanc</option>
-		<option>Ferris</option>
-    </select>
-  </div>
-  <br>
-  <p>How many hours would you like to donate?</p>
-  <p>Example: 1 for 1 hour, 0.5 for 30 minutes, etc</p>
-  <div class="form-group" align=center>
-		  <input type="text" class="form-control" id="DonateTime" name="Time" form="Donateform" style="width: 250px;">
-	  </div>
-</form>
-</form>
-      <div align=center>
-    <button type="submit" form="Donateform" value="Submit" class="btn btn-primary">Submit</button>
-  </div>
-</body>
-</html>
+<form class="container" action=/AddFamily method="get" id="AddFamilyForm" align="center">
+	<div class="form-group" align=center>
+  		  <label for="FirstName">First Name: </label><input type="text" class="form-control" id="FirstName" name="FirstName" form="AddFamilyForm" style="width: 150px;">
+		  <label for="LastName">Last Name: </label>
+		  <input type="text" class="form-control" id="LastName" name="LastName" form="AddFamilyForm" style="width: 150px;">
+		  <label for="Phone">Phone Number: </label>
+		  <input type="text" class="form-control" id="Phone" name="Phone" form="AddFamilyForm" style="width: 150px;">
+		  <label for="Email">Email: </label>
+		  <input type="text" class="form-control" id="Email" name="Email" form="AddFamilyForm" style="width: 150px;">
+		  <label for="Password">Password: </label>
+		  <input type="text" class="form-control" id="Password" name="Password" form="AddFamilyForm" style="width: 150px;">
+	  	  </div>
