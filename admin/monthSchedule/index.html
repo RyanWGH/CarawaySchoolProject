@@ -65,24 +65,25 @@
     <script src="/js/responsive-calendar.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
+        let a = new Date();
         $(".responsive-calendar").responsiveCalendar({
-          time: '2018-03',
+          time: a.getFullYear() + '-' + ('0' + (a.getMonth()+1)).slice(-2),
           events: {
-    "2018-03-03": {"url": "/admin/DaySchedule"},
-	"2018-03-04": {"url": "/admin/DaySchedule"},
-	"2018-03-05": {"url": "/admin/DaySchedule"},
-	"2018-03-06": {"url": "/admin/DaySchedule"},
-	"2018-03-07": {"url": "/admin/DaySchedule"},
-	"2018-03-08": {"url": "/admin/DaySchedule"},
-	"2018-03-09": {"url": "/admin/DaySchedule"},
-	"2018-03-10": {"url": "/admin/DaySchedule"},
-	"2018-03-12": {"url": "/admin/DaySchedule"},
-	"2018-03-13": {"url": "/admin/DaySchedule"},
-	"2018-03-14": {"url": "/admin/DaySchedule"},
-	"2018-03-15": {"url": "/admin/DaySchedule"},
-	"2018-03-16": {"url": "/admin/DaySchedule"},
-	"2018-03-17": {"url": "/admin/DaySchedule"},
-  }
+            "2018-03-03": {"url": "/admin/DaySchedule"},
+            "2018-03-04": {"url": "/admin/DaySchedule"},
+            "2018-03-05": {"url": "/admin/DaySchedule"},
+            "2018-03-06": {"url": "/admin/DaySchedule"},
+            "2018-03-07": {"url": "/admin/DaySchedule"},
+            "2018-03-08": {"url": "/admin/DaySchedule"},
+            "2018-03-09": {"url": "/admin/DaySchedule"},
+            "2018-03-10": {"url": "/admin/DaySchedule"},
+            "2018-03-12": {"url": "/admin/DaySchedule"},
+            "2018-03-13": {"url": "/admin/DaySchedule"},
+            "2018-03-14": {"url": "/admin/DaySchedule"},
+            "2018-03-15": {"url": "/admin/DaySchedule"},
+            "2018-03-16": {"url": "/admin/DaySchedule"},
+            "2018-03-17": {"url": "/admin/DaySchedule"},
+          }
         });
       });
     </script>

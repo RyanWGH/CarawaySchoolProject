@@ -25,7 +25,6 @@ const TOTAL_STATS_PAGE = role => `/${role}/totalStats`;
 const generalEndpoints = {
   "/": (req, res, role) => {
     if (role) {
-      console.log(role);
       serveFile(req, res, MAIN_PAGE(role));
     } else {
       serveFile(req, res, LOGIN_PAGE);
@@ -119,6 +118,12 @@ const generalEndpoints = {
       res.end();
     });
 
+    return 1;
+  },
+
+  "/familytest": (req, res) => {
+    console.log('familytest');
+    getFamilyNames(() => {});
     return 1;
   }
 };
@@ -230,8 +235,78 @@ const adminEndpoints = {
   "/weekStats": (req, res, role) => {
     serveFile(req, res, WEEK_STATS_PAGE(role));
     return 1;
+  },
+
+  "/getfamilies": (req, res, role) => {
+    getFamilyNames((err, names) => {
+      if (!err) {
+        console.log(names);
+        res.end(JSON.stringify(names));
+      }
+    });
+    return 1;
+  },
+
+  "/getfacilitators": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFacilitatorNames(data.familyid, (err, names) => {
+        if (!err) {
+          console.log(names);
+          res.end(JSON.stringify(names));
+        }
+      });
+    });
+    return 1;
+  },
+
+  "/Addfacilitator": (req, res, role) => {
+    return 1;
+  },
+
+  "/Deletefacilitator": (req, res, role) => {
+    return 1;
   }
 };
+
+function getFamilyNames(callback) {
+  db.query(`SELECT firstname, lastname, familyunitid
+    from familymembers as f1, users as f2
+    where f1.userid = f2.userid and f1.userid in
+    (select distinct userid from familymembers
+    where familyunitid = f1.familyunitid
+    limit 1) order by lastname`, (err, res) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
+function getFacilitatorNames(familyid, callback) {
+  db.query(`SELECT firstname, lastname, f2.userid
+    FROM familymembers as f1, users as f2
+    WHERE f1.userid = f2.userid
+    and f1.familyunitid = ${familyid}`, (err, res) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
 
 function serveFile(req, res, pathname) {
   let path = `.${pathname}`;
