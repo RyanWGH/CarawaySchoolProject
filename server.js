@@ -240,7 +240,6 @@ const adminEndpoints = {
   "/getfamilies": (req, res, role) => {
     getFamilyNames((err, names) => {
       if (!err) {
-        console.log(names);
         res.end(JSON.stringify(names));
       }
     });
@@ -261,7 +260,6 @@ const adminEndpoints = {
 
       getFacilitatorNames(data.familyid, (err, names) => {
         if (!err) {
-          console.log(names);
           res.end(JSON.stringify(names));
         }
       });
@@ -270,10 +268,46 @@ const adminEndpoints = {
   },
 
   "/Addfacilitator": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
+          data.EndTime, data.day, data.month, data.year, (err) => {
+            if (!err) {
+              res.end("Facilitator successfully added");
+            }
+          });
+    });
     return 1;
   },
 
   "/Deletefacilitator": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      deleteFacilitation(data.Facilitator, data.roomid, data.StartTime,
+        data.EndTime, data.day, data.month, data.year, (err) => {
+          if (!err) {
+            res.end("Facilitator successfully deleted");
+          }
+        });
+    });
     return 1;
   }
 };
@@ -304,6 +338,32 @@ function getFacilitatorNames(familyid, callback) {
         callback(true);
       } else {
         callback(null, res.rows);
+      }
+    });
+}
+
+function insertFacilitation(userid, roomid, start, end, day, month, year, callback) {
+  db.query(`INSERT INTO facilitations (userid, roomid, timeStart, timeEnd, day, month, year)
+    VALUES(${userid}, ${roomid}, '${start}', '${end}', ${day}, ${month}, ${year})`,
+    (err) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    });
+}
+
+function deleteFacilitation(userid, roomid, start, end, day, month, year, callback) {
+  db.query(`UPDATE facilitations SET timeStart = '${start}', timeEnd = '${end}'
+    WHERE userid = ${userid} AND roomid = ${roomid} AND day = ${day} AND month = ${month} AND year = ${year}`,
+    (err) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
       }
     });
 }
