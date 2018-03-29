@@ -21,6 +21,7 @@ const REQUESTS_PAGE = role => `/${role}/requests`;
 const CONTACT_PAGE = role => `/${role}/contact`;
 const WEEK_STATS_PAGE = role => `/${role}/weekStats`;
 const TOTAL_STATS_PAGE = role => `/${role}/totalStats`;
+const ADD_FAMILY_PAGE = role => `/${role}/addFamily`;
 
 const generalEndpoints = {
   "/": (req, res, role) => {
@@ -229,6 +230,10 @@ const adminEndpoints = {
 
   "/weekStats": (req, res, role) => {
     serveFile(req, res, WEEK_STATS_PAGE(role));
+    return 1;
+  },
+  "/addFamily": (req, res, role) => {
+    serveFile(req, res, ADD_FAMILY_PAGE(role));
     return 1;
   }
 };
