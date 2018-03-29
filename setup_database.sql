@@ -13,7 +13,8 @@ CREATE TABLE users (
   lastName text NOT NULL,
   phone text NOT NULL,
   email text NOT NULL,
-  pword text NOT NULL
+  pword text NOT NULL,
+  sessionid text
 );
 
 CREATE TABLE familyUnits (
