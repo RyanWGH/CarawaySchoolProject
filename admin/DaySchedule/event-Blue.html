@@ -38,7 +38,7 @@
 	<div class="form-group" aling="left">
 	<span class="tab3">Start Time:</span>
 	<div>
-	<span class="tab3"><input type="time" class="form-control" name="StartTime" style="width: 150px;"></input>
+	<span class="tab3"><input type="time" class="form-control" name="StartTime" style="width: 150px;"></input></span>
 </div>
 	<span class="tab3">End Time:</span>
 	<div>
@@ -51,10 +51,16 @@
 </div>
   </form>
     <div>
-  <span class="tab3"><button type="submit" formaction="/Addfacilitator" form="Registerform" method="post" value="Submit" class="btn btn-primary">Submit</button>
+  <span class="tab3"><button type="submit" formaction="/Addfacilitator" form="Registerform" method="post" value="Submit" class="btn btn-primary">Submit</button></span>
 
   <span class="tab1"><span class="tab3"><button type="submit" formaction="/Deletefacilitator" form="Registerform" method="post" value="Submit" class="btn btn-primary">Delete</button></span></span>
 </div>
+<script>
+	$( document ).ready(function(){
+		console.log( "document loaded")
+		$('#Family').prepend("<option>", {value: 1, text: "Test Option"});
+	});
+	</script>
 </body>
 </html>
 </div>
