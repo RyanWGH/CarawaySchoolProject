@@ -11,7 +11,7 @@
 		.tab3 {position:relative;left:25px;
 				white-space:nowrap;}
 		.tab4 {position:relative;left:75px;
-				white-space:nowrap;}	
+				white-space:nowrap;}
 		.tab5 {position:relative;left:160px;
 				white-space:nowrap;}
   </style>
@@ -21,22 +21,18 @@
 </head>
 <body>
 
-<form class="form-inline" id="Registerform" align="left">
+<form class="form-inline" id="Registerform" method="post" align="left">
   <h2>Time Slot: Select Time</h2>
   <form>
     <div class="form-group" align="left">
       <span class="tab3"><label for="Family">Family:</label></span><br></br>
-      <span class="tab3"><select class="form-control" id="Family" name="Family" form="Registerform" style="width: 150px;">
-	  </select></span>
+      <span class="tab3"><select class="form-control" id="Family" name="Family" form="Registerform" style="width: 150px;"></span>
+	  </select>
     </div>
     <div class="form-group" align="left">
       <span class="tab4"><label for="Facilitator">Facilitator:</label></span><br></br>
-      <span class="tab4"><select class="form-control" id="Facilitator" name="Facilitator" form="Registerform" style="width: 150px;">
-		  	<option>James</option>
-			<option>Ryan</option>
-			<option>Oliver</option>
-			<option>Person4</option>
-	  </select></span>
+      <span class="tab4"><select class="form-control" id="Facilitator" name="Facilitator" form="Registerform" style="width: 150px;"></span>
+	  </select>
     </div>
   <p></p>
 	<div class="form-group" aling="left">
@@ -46,13 +42,17 @@
 </div>
 	<span class="tab3">End Time:</span>
 	<div>
-	<span class="tab3"><input type="time" class="form-control" form="Registerform" name="StartTime" style="width: 150px;"></input></span>
+	<span class="tab3"><input type="time" class="form-control" form="Registerform" name="EndTime" style="width: 150px;"></input></span>
 </div>
+<input type="hidden" name="roomid" id="roomidinput" value=1></input>
+<input type="hidden" name="day" id="dayinput" value=29></input>
+<input type="hidden" name="month" id="monthinput" value=3></input>
+<input type="hidden" name="year" id="yearinput" value=2018></input>
 </div>
   </form>
     <div>
   <span class="tab3"><button type="submit" formaction="/Addfacilitator" form="Registerform" method="post" value="Submit" class="btn btn-primary">Submit</button></span>
-	  
+
   <span class="tab1"><span class="tab3"><button type="submit" formaction="/Deletefacilitator" form="Registerform" method="post" value="Submit" class="btn btn-primary">Delete</button></span></span>
 </div>
 <script>
