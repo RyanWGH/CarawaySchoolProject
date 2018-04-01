@@ -231,7 +231,8 @@ const adminEndpoints = {
   "/weekStats": (req, res, role) => {
     serveFile(req, res, WEEK_STATS_PAGE(role));
     return 1;
-  },
+},
+
   "/addFamily": (req, res, role) => {
     serveFile(req, res, ADD_FAMILY_PAGE(role));
     return 1;
