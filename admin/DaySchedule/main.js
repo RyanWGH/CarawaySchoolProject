@@ -119,6 +119,26 @@ jQuery(document).ready(function($){
 		this.modalBody.find('.event-info').load("/admin/DaySchedule/" + event.parent().attr('data-content')+'.html .event-info > *', function(data){
 			//once the event content has been loaded
 			self.element.addClass('content-loaded');
+
+			$("#Family").change(() => {
+				let family = $("#Family").val();
+				$.post("/getfacilitators", {familyid: family}, (data) => {
+					let names = JSON.parse(data);
+					$("#Facilitator").empty();
+					for (let i of names) {
+						$("#Facilitator").append(`<option value=${i.userid}>${i.firstname} ${i.lastname}</option>`);
+					}
+				});
+			});
+
+			$.get("/getfamilies", (data) => {
+	      let names = JSON.parse(data);
+				$("#Family").empty();
+				for (let i of names) {
+					$("#Family").append(`<option value=${i.familyunitid}>${i.lastname} (${i.firstname})</option>`);
+				}
+				$("#Family").change();
+	    });
 		});
 
 		this.element.addClass('modal-is-open');
