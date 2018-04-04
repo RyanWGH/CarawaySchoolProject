@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Donate Hours - Caraway Facilitation</title>
+  <title>CREATE Facilitator - Caraway Facilitation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
 	  label {display: inline;}
@@ -22,58 +22,50 @@
       <li><a href="/monthSchedule">Schedule</a></li>
       <li><a href="/totalStats">Total Statistics</a></li>
       <li><a href="/weekStats">Weekly Statistics</a></li>
-      <li><a href="/addFamily">Add Family</a></li>
-      <li><a href="/contact">Contact</a></li>
+      <li class="active"><a href="/addFamily">Add Family</a></li>
+      <li><a href="#">Contact</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
-		<li class="active"><a href="/accountSettings">Account Settings</a></li>
+		<li><a href="#">Account Settings</a></li>
 		<li><a href="/logout">Logout</a></li>
 	</u1>
   </div>
 </nav>
 
 <main role="main" class="container">
-<form action=/AddFamily method="get" id="AddFamilyForm">
+<form action=/AddFamily method="post" id="CreateFacilitatorForm">
 	<div class="row">
 		<div class="col-md-3 mb-3">
   		  <label for="FirstName">First Name: </label>
-		  <input type="text" class="form-control" id="FirstName" name="FirstName" form="AddFamilyForm" style="width: 275px;">
+		  <input type="text" class="form-control" id="FirstName" name="FirstName" form="CreateFacilitatorForm" style="width: 275px;">
 	  </div>
   		<div class="col-md-3 mb-3">
 		  <label for="LastName">Last Name: </label>
-		  <input type="text" class="form-control" id="LastName" name="LastName" form="AddFamilyForm" style="width: 275px;">
+		  <input type="text" class="form-control" id="LastName" name="LastName" form="CreateFacilitatorForm" style="width: 275px;">
 	  </div>
   </div>
-  <p></p>
-		  <label for="Email">Email: </label>
-		  <input type="text" class="form-control" id="Email" name="Email" form="AddFamilyForm" style="width: 565px;">
-  		<p></p>
-		  <label for="Password">Password: </label>
-		  <input type="text" class="form-control" id="Password" name="Password" form="AddFamilyForm" style="width: 565px;">
-  		<p></p>
-		<label for="Phone">Phone Number: </label>
-		<input type="text" class="form-control" id="Phone" name="Phone" form="AddFamilyForm" style="width: 275px;">
   		<p></p>
 	   	<div class="row">
 		<div class="col-md-3 mb-3">
-	        <label for="Family">Facilitator:</label>
-	        <select class="form-control" id="Family" name="Family" form="Registerform" style="width: 275px;">
-	  		  	<option>Hancock</option>
-	  			<option>Smith</option>
-	  			<option>Chen</option>
-	  			<option>Li</option>
-	  	  </select>
-		</div>
-		<div class="col-md-3 mb-3">
-	        <label for="Family">Facilitator:</label>
-	        <select class="form-control" id="Family" name="Family" form="Registerform" style="width: 275px;">
+	        <label for="Family">Family:</label>
+	        <select class="form-control" id="Family" name="Family" form="CreateFacilitatorForm" style="width: 275px;">
 	  		  	<option>Hancock</option>
 	  			<option>Smith</option>
 	  			<option>Chen</option>
 	  			<option>Li</option>
 	  	  </select>
 	  </div>
+		  <div class="col-md-3 mb-3">
+	  		<label for="Phone">Phone Number: </label>
+	  		<input type="text" class="form-control" id="Phone" name="Phone" form="CreateFacilitatorForm" style="width: 275px;">
+		</div>
 	      </div>
+		  <p></p>
+				  <label for="Email">Email: </label>
+				  <input type="text" class="form-control" id="Email" name="Email" form="CreateFacilitatorForm" style="width: 565px;">
+		  		<p></p>
+				  <label for="Password">Password: </label>
+				  <input type="text" class="form-control" id="Password" name="Password" form="CreateFacilitatorForm" style="width: 565px;">
 		  <p></p>
 	      <button type="submit" form="loginform" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>

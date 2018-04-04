@@ -24,9 +24,9 @@
       <li><a href="/admin">Home</a></li>
       <li><a href="/monthSchedule">Schedule</a></li>
       <li><a href="/totalStats">Total Statistics</a></li>
-      <li class="active"><a href="/weekStats">Weekly Statistics</a></li>
+      <li><a href="/weekStats">Weekly Statistics</a></li>
       <li><a href="/addFamily">Add Family</a></li>
-      <li><a href="/PendingAbsences">Pending Absences</a></li>
+      <li class="active"><a href="/PendingAbsences">Pending Absences</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
 		<li><a href="#">Account Settings</a></li>
@@ -38,45 +38,39 @@
 	<link rel="stylesheet" href="/css/tablestyle.css">
 
 	<div id="page">
-	<div align="center"><font size=14><b>Weekly Statistics</b></font></div>
+	<div align="center"><font size=14><b>Pending Absences</b></font></div>
 	
 	<ul class="list-group">
-		<table id="familystats">
+		<table id="AbsenceList">
 			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Weekly Hours</th>
-				<th>Weekly Donated Hours</th>
-				<th>Weekly Donation</th>
-				<th>Monthly Hours</th>
-				<th>Monthly Donated Hours</th>
-				<th>Monthly Donation</th>
-				<th>Yearly Hours</th>
-				<th>Yearly Donated Hours</th>
-				<th>Yearly Donation</th>
+				<th>Pending Absences</th>
+				<th>Family</th>
+				<th>Start Date</th>
+				<th>End Date</th>
+				<th>Accept</th>
+				<th>Deny</th>
 			</tr>
 	</ul>
 	
 	</div>
 <script>
 	$( document ).ready(function(){
-			$.get("/getweekstats", (data) => {
-				let stats = JSON.parse(data);
-				for (let i of stats) {
-					$("#familystats").append(`<tr>
-						<td>${i.familyunitid}</td>
-						<td>${i.familyname}</td>
-						<td>${i.weeklyhours}</td>
-						<td>${i.weeklyhoursdonated}</td>
-						<td>${i.weeklydonation}</td>
-						<td>${i.monthlyhours}</td>
-						<td>${i.monthlyhoursdonated}</td>
-						<td>${i.monthlydonation}</td>
-						<td>${i.yearlyhours}</td>
-						<td>${i.yearlyhoursdonated}</td>
-						<td>${i.yearlydonation}</td>
+			$.get("/getabsencelist", (data) => {
+				let absences = JSON.parse(data);
+				for (let i of absences) {
+					$("#AbsenceList").append(`<tr>
+						<td class="absence-${i.absenceid}">${i.absenceid}</td>
+						<td class="familyname-${i.absenceid}">${i.familyname}</td>
+						<td class="fromdate-${i.absenceid}">${(new Date(i.fromdate)).toDateString()}</td>
+						<td class="todate-${i.absenceid}">${(new Date(i.todate)).toDateString()}</td>
+						<td class="accept accept-${i.absenceid}"><button type="submit" value="Submit" class="btn btn-primary">Accept</button></td>
+						<td class="deny deny-${i.absenceid}"><button type="submit" value="Submit" class="btn btn-primary">Deny</button></td>
 						</tr>`);
 				}
+				
+				$('.accept').click(() => {
+					$(this).parent().find('.')
+				})
 			});
 	});
 	</script>
