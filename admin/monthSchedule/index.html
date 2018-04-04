@@ -68,15 +68,12 @@
         let a = new Date();
         $(".responsive-calendar").responsiveCalendar({
           time: a.getFullYear() + '-' + ('0' + (a.getMonth()+1)).slice(-2),
-          startFromSunday: true,
-          onInit: () => {
-            console.log('a');
-            $('.day:not(.sat,.sun,.header,.not-current)').click(() => {
-              console.log($(this).children().first().attr('data-day'));
-            });
-          }
+          startFromSunday: true
         });
-
+        $('.day:not(.sat,.sun,.header,.not-current)').click(() => {
+          console.log($(this));
+          console.log($(this).children().first().attr('data-day'));
+        });
       });
     </script>
   </body>
