@@ -1,4 +1,4 @@
-﻿
+
 
 CREATE TABLE rooms (
   roomId serial PRIMARY KEY,
@@ -21,6 +21,7 @@ CREATE TABLE familyUnits (
   familyUnitId serial PRIMARY KEY,
 
   numberOfChildren integer NOT NULL,
+  familyName text NOT NULL,
   
   --Hours are gotten through facilitations can be null
   weeklyHours float,		--Hours gained through facilitation

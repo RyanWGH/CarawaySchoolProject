@@ -29,7 +29,7 @@
       <li><a href="/totalStats">Total Statistics</a></li>
       <li><a href="/weekStats">Weekly Statistics</a></li>
       <li><a href="/addFamily">Add Family</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="/PendingAbsences">Pending Absences</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
 		<li><a href="#">Account Settings</a></li>
@@ -39,7 +39,7 @@
   	</nav>
       <div class="container">
       <!-- Responsive calendar - START -->
-    	<div class="responsive-calendar">
+    	<div class="responsive-calendar" data-start-from-sunday="false">
         <div class="controls">
             <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
             <h4><span data-head-year></span> <span data-head-month></span></h4>
@@ -74,6 +74,7 @@
           console.log($(this));
           console.log($(this).children().first().attr('data-day'));
         });
+
       });
     </script>
   </body>
