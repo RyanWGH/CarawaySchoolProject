@@ -22,6 +22,7 @@ const CONTACT_PAGE = role => `/${role}/contact`;
 const WEEK_STATS_PAGE = role => `/${role}/weekStats`;
 const TOTAL_STATS_PAGE = role => `/${role}/totalStats`;
 const ADD_FAMILY_PAGE = role => `/${role}/addFamily`;
+const ABSENCE_LIST_PAGE = role => `/${role}/PendingAbsences`
 
 const generalEndpoints = {
   "/": (req, res, role) => {
@@ -267,9 +268,15 @@ const adminEndpoints = {
   "/weekStats": (req, res, role) => {
     serveFile(req, res, WEEK_STATS_PAGE(role));
     return 1;
-  },
+},
+
   "/addFamily": (req, res, role) => {
     serveFile(req, res, ADD_FAMILY_PAGE(role));
+    return 1;
+  },
+
+  "/PendingAbsences": (req, res, role) => {
+    serveFile(req, res, ABSENCE_LIST_PAGE(role));
     return 1;
   },
 
@@ -299,6 +306,24 @@ const adminEndpoints = {
           res.end(JSON.stringify(names));
         }
       });
+    });
+    return 1;
+  },
+
+  "/getweekstats": (req, res, role) => {
+    getFamilyStats((err, stats) => {
+      if(!err) {
+        res.end(JSON.stringify(stats));
+      }
+    });
+    return 1;
+  },
+
+  "/getabsencelist": (req, res, role) => {
+    getAbsences((err, absences) => {
+      if(!err) {
+        res.end(JSON.stringify(absences));
+      }
     });
     return 1;
   },
@@ -442,6 +467,30 @@ function deleteFacilitation(userid, roomid, start, end, day, month, year, callba
         callback(true);
       } else {
         callback(null);
+      }
+    });
+}
+
+function getFamilyStats(callback){
+  db.query(`SELECT * from familyUnits`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
+
+function getAbsences(callback){
+  db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
       }
     });
 }
