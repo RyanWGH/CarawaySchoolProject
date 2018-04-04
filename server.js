@@ -416,38 +416,39 @@ function createSessionID(user) {
 }
 
 function lookupSession(req, res, id, callback) {
-  db.query("SELECT * FROM users WHERE sessionid = $1", [id], (err, result) => {
+  db.query(`SELECT userid, firstname, lastname, email, phone
+    FROM users WHERE sessionid = '${id}'`, (err, result) => {
     if (err) {
       console.log(err.stack);
       callback(false);
     } else {
       let user = result.rows[0];
       if (user) {
-        db.query("SELECT * FROM admins WHERE userid = $1", [user.userid], (err, adminRes) => {
+        db.query(`SELECT * FROM admins WHERE userid = ${user.userid}`, (err, adminRes) => {
           if (err) {
             console.log(err.stack);
             callback(false);
           } else {
             if (adminRes.rows[0]) {
-              callback(true, "admin");
+              callback(true, "admin", user);
             } else {
-              db.query("SELECT * FROM boards WHERE userid = $1", [user.userid], (err, boardRes) => {
+              db.query(`SELECT * FROM boards WHERE userid = ${user.userid}`, (err, boardRes) => {
                 if (err) {
                   console.log(err.stack);
                   callback(false);
                 } else {
                   if (boardRes.rows[0]) {
-                    callback(true, "board");
+                    callback(true, "board", user);
                   } else {
-                    db.query("SELECT * FROM teachers WHERE userid = $1", [user.userid], (err, teacherRes) => {
+                    db.query(`SELECT * FROM teachers WHERE userid = ${user.userid}`, (err, teacherRes) => {
                       if (err) {
                         console.log(err.stack);
                         callback(false);
                       } else {
                         if (teacherRes.rows[0]) {
-                          callback(true, "teacher");
+                          callback(true, "teacher", user);
                         } else {
-                          callback(true, "user");
+                          callback(true, "user", user);
                         }
                       }
                     });

@@ -46,13 +46,13 @@
             <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
         </div><hr/>
         <div class="day-headers">
+          <div class="day header">Sun</div>
           <div class="day header">Mon</div>
           <div class="day header">Tue</div>
           <div class="day header">Wed</div>
           <div class="day header">Thu</div>
           <div class="day header">Fri</div>
           <div class="day header">Sat</div>
-          <div class="day header">Sun</div>
         </div>
         <div class="days" data-group="days">
 
@@ -68,23 +68,15 @@
         let a = new Date();
         $(".responsive-calendar").responsiveCalendar({
           time: a.getFullYear() + '-' + ('0' + (a.getMonth()+1)).slice(-2),
-          events: {
-            "2018-03-03": {"url": "/admin/DaySchedule"},
-            "2018-03-04": {"url": "/admin/DaySchedule"},
-            "2018-03-05": {"url": "/admin/DaySchedule"},
-            "2018-03-06": {"url": "/admin/DaySchedule"},
-            "2018-03-07": {"url": "/admin/DaySchedule"},
-            "2018-03-08": {"url": "/admin/DaySchedule"},
-            "2018-03-09": {"url": "/admin/DaySchedule"},
-            "2018-03-10": {"url": "/admin/DaySchedule"},
-            "2018-03-12": {"url": "/admin/DaySchedule"},
-            "2018-03-13": {"url": "/admin/DaySchedule"},
-            "2018-03-14": {"url": "/admin/DaySchedule"},
-            "2018-03-15": {"url": "/admin/DaySchedule"},
-            "2018-03-16": {"url": "/admin/DaySchedule"},
-            "2018-03-17": {"url": "/admin/DaySchedule"},
+          startFromSunday: true,
+          onInit: () => {
+            console.log('a');
+            $('.day:not(.sat,.sun,.header,.not-current)').click(() => {
+              console.log($(this).children().first().attr('data-day'));
+            });
           }
         });
+
       });
     </script>
   </body>
