@@ -192,7 +192,7 @@ const userEndpoints = {
 
     return 1;
   },
-  
+
   "/request_absence": (req, res, role) => {
   	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
   	//getting the info from the webpage(user)
@@ -268,7 +268,7 @@ const adminEndpoints = {
   "/weekStats": (req, res, role) => {
     serveFile(req, res, WEEK_STATS_PAGE(role));
     return 1;
-},
+  },
 
   "/addFamily": (req, res, role) => {
     serveFile(req, res, ADD_FAMILY_PAGE(role));
@@ -370,49 +370,48 @@ const adminEndpoints = {
         });
     });
     return 1;
-  }
-  
+  },
+
   "/ApproveAbsence": (req, res, role) => {
   	let body = '';
-  	req,on("data", (data) => {
-  	body += data;
-  	if (body.length > 1e6) {
-  		req.connection.destroy();
-  	}
-  	});
-  	
+  	req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      approveAbsence(data.absenceId, (err) => {
+        if(!err) {
+          res.end("Absence Succesfully Approved");
+        }
+      });
+    });
+    return 1;
+  },
+
+  "/DenyAbsence": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+  	   body += data;
+       if (body.length > 1e6) {
+         req.connection.destroy();
+       }
+     });
+
   	req.on("end", () => {
   		let data = qs.parse(body);
-  		
-  		approveAbsence(data.absenceId, (err) => {
-  			if(!err) {
-  				res.end("Absence Succesfully Approved");
-  				}
-  			});
-  		});
-  		return 1;
-  	}
-  	
-  	"/DenyAbsence": (req, res, role) => {
-  	let body = '';
-  	req,on("data", (data) => {
-  	body += data;
-  	if (body.length > 1e6) {
-  		req.connection.destroy();
-  	}
-  	});
-  	
-  	req.on("end", () => {
-  		let data = qs.parse(body);
-  		
-  		denyAbsence(data.absenceId, (err) => {
-  			if(!err) {
-  				res.end("Absence denied");
-  				}
-  			});
-  		});
-  		return 1;
-  	}
+      denyAbsence(data.absenceId, (err) => {
+        if(!err) {
+          res.end("Absence denied");
+        }
+  	   });
+     });
+     return 1;
+   }
 };
 
 function getFamilyNames(callback) {
@@ -497,50 +496,44 @@ function getAbsences(callback){
 
 function requestAbsence( userId, fromDate, toDate, callback){
 	db.query(`SELECT familyUnitId from familyMembers where userId = '${userId}'`, (err, res) => {
-	if (err) {
-	console.log(err.stack);
-	callback(true);
-	} else {
-		console.log(res.rows);
-		console.log(typeof res.rows);
-		console.log(res.rows.familyunitid);
-		console.log(res.rows[0].familyunitid);
-		let familyId = res.rows[0].familyunitid;
-		// status pending =1
-		db.query(`INSERT into absences (fromDate, toDate, familyUnitId, status) values('${fromDate}','${toDate}', ${familyId}, 1)`,(err) => {
-		if (err) {
-		console.log(err.stack);
-		callback(true);
-		} else {
-			callback(null);
-			}
-			});
-		}
-		});
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else {
+      let familyId = res.rows[0].familyunitid;
+      // status pending =1
+      db.query(`INSERT into absences (fromDate, toDate, familyUnitId, status) values('${fromDate}','${toDate}', ${familyId}, 1)`,(err) => {
+        if (err) {
+          console.log(err.stack);
+          callback(true);
+        } else {
+          callback(null);
+        }
+      });
+    }
+  });
 }
 
-function approveAbsence (absenceId, callback){
+function approveAbsence(absenceId, callback) {
 	db.query(`UPDATE absences set status = 2 WHERE absenceId = ${absenceId}`, (err) => {
-	if (err) {
-		
-		console.log(err.stack);
-		callback(true);
-	} else{
-		callback(null);
-		}
-		});		
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else{
+      callback(null);
+    }
+  });
 }
 
-function denyAbsence (absenceId, callback){
+function denyAbsence(absenceId, callback) {
 	db.query(`UPDATE absences set status = 0 WHERE absenceId = ${absenceId}`, (err) => {
-	if (err) {
-		
-		console.log(err.stack);
-		callback(true);
-	} else{
-		callback(null);
-		}
-	});		
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else{
+      callback(null);
+    }
+  });
 }
 
 function serveFile(req, res, pathname) {
@@ -586,14 +579,15 @@ function createSessionID(user) {
 }
 
 function lookupSession(req, res, id, callback) {
-  db.query("SELECT * FROM users WHERE sessionid = $1", [id], (err, result) => {
+  db.query(`SELECT userid, firstname, lastname, email, phone
+    FROM users WHERE sessionid = '${id}'`, (err, result) => {
     if (err) {
       console.log(err.stack);
       callback(false);
     } else {
       let user = result.rows[0];
       if (user) {
-        db.query("SELECT * FROM admins WHERE userid = $1", [user.userid], (err, adminRes) => {
+        db.query(`SELECT * FROM admins WHERE userid = ${user.userid}`, (err, adminRes) => {
           if (err) {
             console.log(err.stack);
             callback(false);
@@ -601,15 +595,15 @@ function lookupSession(req, res, id, callback) {
             if (adminRes.rows[0]) {
               callback(true, "admin", user);
             } else {
-              db.query("SELECT * FROM boards WHERE userid = $1", [user.userid], (err, boardRes) => {
+              db.query(`SELECT * FROM boards WHERE userid = ${user.userid}`, (err, boardRes) => {
                 if (err) {
                   console.log(err.stack);
                   callback(false);
                 } else {
                   if (boardRes.rows[0]) {
-                    callback(true, "board"), user;
+                    callback(true, "board", user);
                   } else {
-                    db.query("SELECT * FROM teachers WHERE userid = $1", [user.userid], (err, teacherRes) => {
+                    db.query(`SELECT * FROM teachers WHERE userid = ${user.userid}`, (err, teacherRes) => {
                       if (err) {
                         console.log(err.stack);
                         callback(false);
