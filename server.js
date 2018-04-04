@@ -191,7 +191,38 @@ const userEndpoints = {
     });
 
     return 1;
-  }
+  },
+  
+  "/request_absence": (req, res, role) => {
+  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+  	//getting the info from the webpage(user)
+  	lookupSession(req, res, sessionID, (validSession, role, user) => {
+      //checking if the session ID is valid
+      if (!validSession) {
+        console.log("invalid session trying to sign up");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        requestAbsence( user.userid, data.FromDate, data.ToDate, (err) => {
+            if (!err) {
+              res.end("Request successfully added");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
 };
 
 const teacherEndpoints = {
@@ -340,6 +371,48 @@ const adminEndpoints = {
     });
     return 1;
   }
+  
+  "/ApproveAbsence": (req, res, role) => {
+  	let body = '';
+  	req,on("data", (data) => {
+  	body += data;
+  	if (body.length > 1e6) {
+  		req.connection.destroy();
+  	}
+  	});
+  	
+  	req.on("end", () => {
+  		let data = qs.parse(body);
+  		
+  		approveAbsence(data.absenceId, (err) => {
+  			if(!err) {
+  				res.end("Absence Succesfully Approved");
+  				}
+  			});
+  		});
+  		return 1;
+  	}
+  	
+  	"/DenyAbsence": (req, res, role) => {
+  	let body = '';
+  	req,on("data", (data) => {
+  	body += data;
+  	if (body.length > 1e6) {
+  		req.connection.destroy();
+  	}
+  	});
+  	
+  	req.on("end", () => {
+  		let data = qs.parse(body);
+  		
+  		denyAbsence(data.absenceId, (err) => {
+  			if(!err) {
+  				res.end("Absence denied");
+  				}
+  			});
+  		});
+  		return 1;
+  	}
 };
 
 function getFamilyNames(callback) {
@@ -422,6 +495,54 @@ function getAbsences(callback){
     });
 }
 
+function requestAbsence( userId, fromDate, toDate, callback){
+	db.query(`SELECT familyUnitId from familyMembers where userId = '${userId}'`, (err, res) => {
+	if (err) {
+	console.log(err.stack);
+	callback(true);
+	} else {
+		console.log(res.rows);
+		console.log(typeof res.rows);
+		console.log(res.rows.familyunitid);
+		console.log(res.rows[0].familyunitid);
+		let familyId = res.rows[0].familyunitid;
+		// status pending =1
+		db.query(`INSERT into absences (fromDate, toDate, familyUnitId, status) values('${fromDate}','${toDate}', ${familyId}, 1)`,(err) => {
+		if (err) {
+		console.log(err.stack);
+		callback(true);
+		} else {
+			callback(null);
+			}
+			});
+		}
+		});
+}
+
+function approveAbsence (absenceId, callback){
+	db.query(`UPDATE absences set status = 2 WHERE absenceId = ${absenceId}`, (err) => {
+	if (err) {
+		
+		console.log(err.stack);
+		callback(true);
+	} else{
+		callback(null);
+		}
+		});		
+}
+
+function denyAbsence (absenceId, callback){
+	db.query(`UPDATE absences set status = 0 WHERE absenceId = ${absenceId}`, (err) => {
+	if (err) {
+		
+		console.log(err.stack);
+		callback(true);
+	} else{
+		callback(null);
+		}
+	});		
+}
+
 function serveFile(req, res, pathname) {
   let path = `.${pathname}`;
   fs.exists(path, (exist) => {
@@ -478,7 +599,7 @@ function lookupSession(req, res, id, callback) {
             callback(false);
           } else {
             if (adminRes.rows[0]) {
-              callback(true, "admin");
+              callback(true, "admin", user);
             } else {
               db.query("SELECT * FROM boards WHERE userid = $1", [user.userid], (err, boardRes) => {
                 if (err) {
@@ -486,7 +607,7 @@ function lookupSession(req, res, id, callback) {
                   callback(false);
                 } else {
                   if (boardRes.rows[0]) {
-                    callback(true, "board");
+                    callback(true, "board"), user;
                   } else {
                     db.query("SELECT * FROM teachers WHERE userid = $1", [user.userid], (err, teacherRes) => {
                       if (err) {
@@ -494,9 +615,9 @@ function lookupSession(req, res, id, callback) {
                         callback(false);
                       } else {
                         if (teacherRes.rows[0]) {
-                          callback(true, "teacher");
+                          callback(true, "teacher", user);
                         } else {
-                          callback(true, "user");
+                          callback(true, "user", user);
                         }
                       }
                     });
