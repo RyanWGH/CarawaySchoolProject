@@ -190,7 +190,38 @@ const userEndpoints = {
     });
 
     return 1;
-  }
+  },
+
+  "/request_absence": (req, res, role) => {
+  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+  	//getting the info from the webpage(user)
+  	lookupSession(req, res, sessionID, (validSession, role, user) => {
+      //checking if the session ID is valid
+      if (!validSession) {
+        console.log("invalid session trying to sign up");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        requestAbsence( user.userid, data.FromDate, data.ToDate, (err) => {
+            if (!err) {
+              res.end("Request successfully added");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
 };
 
 const teacherEndpoints = {
@@ -237,6 +268,7 @@ const adminEndpoints = {
     serveFile(req, res, WEEK_STATS_PAGE(role));
     return 1;
   },
+
   "/addFamily": (req, res, role) => {
     serveFile(req, res, ADD_FAMILY_PAGE(role));
     return 1;
@@ -314,7 +346,48 @@ const adminEndpoints = {
         });
     });
     return 1;
-  }
+  },
+
+  "/ApproveAbsence": (req, res, role) => {
+  	let body = '';
+  	req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      approveAbsence(data.absenceId, (err) => {
+        if(!err) {
+          res.end("Absence Succesfully Approved");
+        }
+      });
+    });
+    return 1;
+  },
+
+  "/DenyAbsence": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+  	   body += data;
+       if (body.length > 1e6) {
+         req.connection.destroy();
+       }
+     });
+
+  	req.on("end", () => {
+  		let data = qs.parse(body);
+      denyAbsence(data.absenceId, (err) => {
+        if(!err) {
+          res.end("Absence denied");
+        }
+  	   });
+     });
+     return 1;
+   }
 };
 
 function getFamilyNames(callback) {
@@ -371,6 +444,48 @@ function deleteFacilitation(userid, roomid, start, end, day, month, year, callba
         callback(null);
       }
     });
+}
+
+function requestAbsence(userId, fromDate, toDate, callback) {
+	db.query(`SELECT familyUnitId from familyMembers where userId = '${userId}'`, (err, res) => {
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else {
+      let familyId = res.rows[0].familyunitid;
+      // status pending =1
+      db.query(`INSERT into absences (fromDate, toDate, familyUnitId, status) values('${fromDate}','${toDate}', ${familyId}, 1)`,(err) => {
+        if (err) {
+          console.log(err.stack);
+          callback(true);
+        } else {
+          callback(null);
+        }
+      });
+    }
+  });
+}
+
+function approveAbsence(absenceId, callback) {
+	db.query(`UPDATE absences set status = 2 WHERE absenceId = ${absenceId}`, (err) => {
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else{
+      callback(null);
+    }
+  });
+}
+
+function denyAbsence(absenceId, callback) {
+	db.query(`UPDATE absences set status = 0 WHERE absenceId = ${absenceId}`, (err) => {
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else{
+      callback(null);
+    }
+  });
 }
 
 function serveFile(req, res, pathname) {
