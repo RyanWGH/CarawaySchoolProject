@@ -22,7 +22,13 @@ const CONTACT_PAGE = role => `/${role}/contact`;
 const WEEK_STATS_PAGE = role => `/${role}/weekStats`;
 const TOTAL_STATS_PAGE = role => `/${role}/totalStats`;
 const ADD_FAMILY_PAGE = role => `/${role}/addFamily`;
-const ABSENCE_LIST_PAGE = role => `/${role}/PendingAbsences`
+const ABSENCE_LIST_PAGE = role => `/${role}/PendingAbsences`;
+const EDIT_FAMILY = role => `/${role}/EditFamily`;
+const EDIT_FACILITATOR = role => `/$role}/EditFacilitator`;
+const CREATE_FAMILY = role => `/${role}/CreateFamily`;
+const CHANGE_PASSWORD = role => `/${role}/ChangePassword`;
+const ACCEPT_FACILITATOR = role => `/${role}/AcceptFacilitator`;
+const ACCOUNT_SETTINGS = role => `/${role}/AccountSettings`;
 
 const generalEndpoints = {
   "/": (req, res, role) => {
@@ -280,6 +286,36 @@ const adminEndpoints = {
     return 1;
   },
 
+  "/EditFamily": (req, res, role) => {
+    serveFile(req, res, EDIT_FAMILY(role));
+    return 1;
+  },
+
+  "/EditFacilitator": (req, res, role) => {
+    serveFile(req, res, EDIT_FACILITATOR(role));
+    return 1;
+  },
+
+    "/CreateFamily": (req, res, role) => {
+    serveFile(req, res, CREATE_FAMILY(role));
+    return 1;
+  },
+
+    "/ChangePassword": (req, res, role) => {
+    serveFile(req, res, CHANGE_PASSWORD(role));
+    return 1;
+  },
+
+    "/AcceptFacilitator": (req, res, role) => {
+    serveFile(req, res, ACCEPT_FACILITATOR(role));
+    return 1;
+  },
+
+    "/AccountSettings": (req, res, role) => {
+    serveFile(req, res, ACCOUNT_SETTINGS(role));
+    return 1;
+  },
+
   "/getfamilies": (req, res, role) => {
     getFamilyNames((err, names) => {
       if (!err) {
@@ -368,6 +404,46 @@ const adminEndpoints = {
             res.end("Facilitator successfully deleted");
           }
         });
+    });
+    return 1;
+  },
+
+  "/Createfamily": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+      createFamily(data.NumberOfChildren, data.FamilyName, (err) => {
+        if (!err) {
+          res.end("Family Successfully Created");
+        }
+      });
+    });
+    return 1;
+  },
+
+  "/Familyedit": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+      editFamily(data.FamilyName, data.NumberOfChildren, data.Family, (err) => {
+        if (!err) {
+          res.end("Family Successfully Edited");
+        }
+      });
     });
     return 1;
   },
@@ -468,6 +544,30 @@ function deleteFacilitation(userid, roomid, start, end, day, month, year, callba
         callback(null);
       }
     });
+}
+
+function createFamily(AddNumberOfChildren, AddfamilyName, callback){
+  db.query(`INSERT INTO familyunits (numberOfChildren, familyName) VALUES(${AddNumberOfChildren}, '${AddfamilyName}')`,
+    (err) => {
+      if(err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    })
+}
+
+function editFamily(newfamilyname, numofchildren, familyunitid, callback){
+  db.query(`UPDATE familyUnits SET numberOfChildren = ${numofchildren}, familyName = '${newfamilyname}' WHERE familyUnitID = ${familyunitid}`,
+    (err) => {
+      if(err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    })
 }
 
 function getFamilyStats(callback){

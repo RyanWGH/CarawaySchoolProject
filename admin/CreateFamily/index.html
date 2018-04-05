@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Account Settings - Caraway Facilitation</title>
+  <title>CREATE FAMILY - Caraway Facilitation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
 	  label {display: inline;}
@@ -22,30 +22,31 @@
       <li><a href="/monthSchedule">Schedule</a></li>
       <li><a href="/totalStats">Total Statistics</a></li>
       <li><a href="/weekStats">Weekly Statistics</a></li>
-      <li><a href="/addFamily">Edit Family</a></li>
+      <li class="active"><a href="/addFamily">Add Family</a></li>
       <li><a href="#">Contact</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
-		<li class="active"><a href="#">Account Settings</a></li>
+		<li><a href="#">Account Settings</a></li>
 		<li><a href="/logout">Logout</a></li>
 	</u1>
   </div>
 </nav>
 
 <main role="main" class="container">
-<form action=/AddFamily method="get" id="AddFamilyForm">
-  <p></p>
-  <label for="LastName">Last Name: </label>
-  <input type="text" class="form-control" id="LastName" name="LastName" form="AddFamilyForm" style="width: 275px;">
-  <p></p>
-  <label for="FirstName">First Name: </label>
-  <input type="text" class="form-control" id="FirstName" name="FirstName" form="AddFamilyForm" style="width: 275px;">
-  <p></p>
-		<label for="Phone">Phone Number: </label>
-		<input type="text" class="form-control" id="Phone" name="Phone" form="AddFamilyForm" style="width: 275px;">
+<form action=/AddFamily method="post" id="AddFamilyForm">
+	<div class="row">
+		<div class="col-md-3 mb-3">
+  		  <label for="FirstName">Family Name: </label>
+		  <input type="text" class="form-control" id="FamilyName" name="FamilyName" form="AddFamilyForm" style="width: 275px;">
+	  </div>
+  		<div class="col-md-3 mb-3">
+		  <label for="LastName">Number Of Children: </label>
+		  <input type="text" class="form-control" id="NumberOfOfChildren" name="NumberOfOfChildren" form="AddFamilyForm" style="width: 275px;">
+	  </div>
+  </div>
 		  <p></p>
-	      <button type="submit" form="loginform" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
-		  <p></p>
-		  <button type="submit" form="loginform" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
+	      <button type="submit" formaction="/Createfamily" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>
 </main>
+</body>
+</html>
