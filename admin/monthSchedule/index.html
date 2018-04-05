@@ -68,13 +68,30 @@
         let a = new Date();
         $(".responsive-calendar").responsiveCalendar({
           time: a.getFullYear() + '-' + ('0' + (a.getMonth()+1)).slice(-2),
-          startFromSunday: true
+          startFromSunday: true,
+          monthChangeAnimation: false,
+          onInit: () => {
+            setTimeout(() => {
+              $('.day:not(.sat,.sun,.header,.not-current)').click(function() {
+                let item = $(this).children().first();
+                let date = item.attr("data-year") + '-' + item.attr("data-month") + '-' + item.attr("data-day");
+                localStorage.setItem("scheduleDate", date);
+                window.location.assign("/DaySchedule");
+              });
+            }, 4);
+          },
+          onMonthChange: () => {
+            setTimeout(() => {
+              $('.day:not(.sat,.sun,.header,.not-current)').click(function() {
+                console.log("c");
+                let item = $(this).children().first();
+                let date = item.attr("data-year") + '-' + item.attr("data-month") + '-' + item.attr("data-day");
+                localStorage.setItem("scheduleDate", date);
+                window.location.assign("/DaySchedule");
+              });
+            }, 4);
+          }
         });
-        $('.day:not(.sat,.sun,.header,.not-current)').click(() => {
-          console.log($(this));
-          console.log($(this).children().first().attr('data-day'));
-        });
-
       });
     </script>
   </body>

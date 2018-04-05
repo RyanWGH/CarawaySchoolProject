@@ -109,10 +109,12 @@ jQuery(document).ready(function($){
 		var self = this;
 		var mq = self.mq();
 		this.animating = true;
+		let roomid = event.parent().attr('data-event').slice(-1);
+		localStorage.setItem("roomId", roomid);
 
 		//update event name and time
-		this.modalHeader.find('.event-name').text(event.find('.event-name').text());
-		this.modalHeader.find('.event-date').text(event.find('.event-date').text());
+		this.modalHeader.find('.event-name').html($(event[0]).html());
+		//this.modalHeader.find('.event-date').text(event.find('.event-date').text());
 		this.modal.attr('data-event', event.parent().attr('data-event'));
 
 		//update event content
@@ -139,6 +141,38 @@ jQuery(document).ready(function($){
 				}
 				$("#Family").change();
 	    });
+
+			$("#submitfacilitation").click(() => {
+				let date = new Date(localStorage.getItem("scheduleDate"));
+
+				$.post("/Addfacilitation", {
+					Facilitator: $("#Facilitator").val(),
+					roomid: localStorage.getItem("roomId"),
+					StartTime: $("#StartTime").val(),
+					EndTime: $("#EndTime").val(),
+					day: date.getUTCDate(),
+					month: date.getUTCMonth()+1,
+					year: date.getUTCFullYear()
+				}, (data) => {
+					console.log(data);
+				});
+			});
+
+			$("#deletefacilitation").click(() => {
+				let date = new Date(localStorage.getItem("scheduleDate"));
+
+				$.post("/Deletefacilitation", {
+					Facilitator: $("#Facilitator").val(),
+					roomid: localStorage.getItem("roomId"),
+					StartTime: $("#StartTime").val(),
+					EndTime: $("#EndTime").val(),
+					day: date.getUTCDate(),
+					month: date.getUTCMonth()+1,
+					year: date.getUTCFullYear()
+				}, (data) => {
+					console.log(data);
+				});
+			});
 		});
 
 		this.element.addClass('modal-is-open');
