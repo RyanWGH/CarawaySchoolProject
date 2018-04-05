@@ -29,6 +29,8 @@ const CREATE_FAMILY = role => `/${role}/CreateFamily`;
 const CHANGE_PASSWORD = role => `/${role}/ChangePassword`;
 const ACCEPT_FACILITATOR = role => `/${role}/AcceptFacilitator`;
 const ACCOUNT_SETTINGS = role => `/${role}/AccountSettings`;
+const CREATE_FACILITATOR = role => `/${role}/CreateFacilitator`;
+
 
 const generalEndpoints = {
   "/": (req, res, role) => {
@@ -171,6 +173,74 @@ const userEndpoints = {
     serveFile(req, res, CONTACT_PAGE(role));
     return 1;
   },
+  "/AccountSettings": (req, res, role) => {
+    serveFile(req, res, ACCOUNT_SETTINGS(role));
+    return 1;
+  },
+    "/ChangePassword": (req, res, role) => {
+    serveFile(req, res, CHANGE_PASSWORD(role));
+    return 1;
+  },
+
+  "/UpdatePassword": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+            if (!err) {
+              res.end("Request successful");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
+
+  "/EditAccountSettings": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
+            if (!err) {
+              res.end("Request successfully added");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
 
   "/addfacilitator": (req, res, role) => {
     let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
@@ -240,12 +310,148 @@ const teacherEndpoints = {
   "/DaySchedule": (req, res, role) => {
     serveFile(req, res, DAY_PAGE(role));
     return 1;
+  },
+    "/AccountSettings": (req, res, role) => {
+    serveFile(req, res, ACCOUNT_SETTINGS(role));
+    return 1;
+  },
+    "/ChangePassword": (req, res, role) => {
+    serveFile(req, res, CHANGE_PASSWORD(role));
+    return 1;
+  },
+
+    "/UpdatePassword": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+            if (!err) {
+              res.end("Request successful");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
+
+  "/EditAccountSettings": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
+            if (!err) {
+              res.end("Request successfully added");
+            }
+            });
+      });
+    });
+
+    return 1;
   }
 };
 
 const boardEndpoints = {
   "/board": (req, res, role) => {
     serveFile(req, res, MAIN_PAGE(role));
+    return 1;
+  },
+    "/AccountSettings": (req, res, role) => {
+    serveFile(req, res, ACCOUNT_SETTINGS(role));
+    return 1;
+  },
+    "/ChangePassword": (req, res, role) => {
+    serveFile(req, res, CHANGE_PASSWORD(role));
+    return 1;
+  },
+
+    "/UpdatePassword": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+            if (!err) {
+              res.end("Request successful");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
+
+  "/EditAccountSettings": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
+            if (!err) {
+              res.end("Request successfully added");
+            }
+            });
+      });
+    });
+
     return 1;
   }
 };
@@ -296,25 +502,94 @@ const adminEndpoints = {
     return 1;
   },
 
-    "/CreateFamily": (req, res, role) => {
+  "/CreateFamily": (req, res, role) => {
     serveFile(req, res, CREATE_FAMILY(role));
     return 1;
   },
 
-    "/ChangePassword": (req, res, role) => {
+  "/ChangePassword": (req, res, role) => {
     serveFile(req, res, CHANGE_PASSWORD(role));
     return 1;
   },
 
-    "/AcceptFacilitator": (req, res, role) => {
+  "/AcceptFacilitator": (req, res, role) => {
     serveFile(req, res, ACCEPT_FACILITATOR(role));
     return 1;
   },
+  "/CreateFacilitator": (req, res, role) => {
+    serveFile(req, res, CREATE_FACILITATOR(role));
+    return 1;
+  },
 
-    "/AccountSettings": (req, res, role) => {
+  "/AccountSettings": (req, res, role) => {
     serveFile(req, res, ACCOUNT_SETTINGS(role));
     return 1;
   },
+
+  "/EditAccountSettings": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
+            if (!err) {
+              res.end("Request successfully added");
+            }
+            });
+      });
+    });
+
+    return 1;
+  },
+
+  "/UpdatePassword": (req, res, role) => {
+    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+    lookupSession(req, res, sessionID, (validSession, role, user) => {
+      if (!validSession) {
+        console.log("invalid session trying to edit");
+        return;
+      }
+
+      let body = '';
+      req.on("data", (data) => {
+        body += data;
+        if (body.length > 1e6) {
+          req.connection.destroy();
+        }
+      });
+
+      req.on("end", () => {
+        let data = qs.parse(body);
+        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
+            if (!err) {
+              if(message){
+                res.end(message);
+              } else{
+              res.end("Request successful");
+              }
+              }
+            });
+      });
+    });
+
+    return 1;
+  },
+
 
   "/getfamilies": (req, res, role) => {
     getFamilyNames((err, names) => {
@@ -555,8 +830,29 @@ function createFamily(AddNumberOfChildren, AddfamilyName, callback){
       } else {
         callback(null);
       }
-    })
+    });
 }
+
+function updatePassword(userId, CurrentPassword, NewPassword, RepeatPassword, callback){
+  console.log(userId);
+  console.log(CurrentPassword);
+  console.log(NewPassword);
+  console.log(RepeatPassword);
+  if (NewPassword == RepeatPassword){
+  db.query(`UPDATE users SET pword = '${NewPassword}' WHERE userid = ${userId} AND pword='${CurrentPassword}'`,
+    (err) => {
+      if(err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    });
+  } else {
+    callback(null, "Non-Matching Passwords");
+  }
+}
+
 
 function editFamily(newfamilyname, numofchildren, familyunitid, callback){
   db.query(`UPDATE familyUnits SET numberOfChildren = ${numofchildren}, familyName = '${newfamilyname}' WHERE familyUnitID = ${familyunitid}`,
@@ -567,7 +863,7 @@ function editFamily(newfamilyname, numofchildren, familyunitid, callback){
       } else {
         callback(null);
       }
-    })
+    });
 }
 
 function getFamilyStats(callback){
@@ -612,6 +908,18 @@ function requestAbsence( userId, fromDate, toDate, callback){
       });
     }
   });
+}
+
+function editAccountSettings( userId, LastName, FirstName, Phone, callback){
+  db.query(`UPDATE users SET firstname = '${FirstName}', lastname = '${LastName}', phone = '${Phone}' WHERE userId = '${userId}'`,
+    (err) => {
+      if(err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    });
 }
 
 function approveAbsence(absenceId, callback) {
