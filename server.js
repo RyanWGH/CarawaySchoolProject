@@ -328,7 +328,7 @@ const adminEndpoints = {
     return 1;
   },
 
-  "/Addfacilitator": (req, res, role) => {
+  "/Addfacilitation": (req, res, role) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -343,14 +343,14 @@ const adminEndpoints = {
       insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
           data.EndTime, data.day, data.month, data.year, (err) => {
             if (!err) {
-              res.end("Facilitator successfully added");
+              res.end("Facilitation successfully added");
             }
           });
     });
     return 1;
   },
 
-  "/Deletefacilitator": (req, res, role) => {
+  "/Deletefacilitation": (req, res, role) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -365,7 +365,7 @@ const adminEndpoints = {
       deleteFacilitation(data.Facilitator, data.roomid, data.StartTime,
         data.EndTime, data.day, data.month, data.year, (err) => {
           if (!err) {
-            res.end("Facilitator successfully deleted");
+            res.end("Facilitation successfully deleted");
           }
         });
     });
@@ -409,6 +409,28 @@ const adminEndpoints = {
           res.end("Absence denied");
         }
   	   });
+     });
+     return 1;
+   },
+
+   "/getfacilitations": (req, res, role) => {
+     let body = '';
+
+     req.on("data", (data) => {
+       body += data;
+       if (body.length > 1e6) {
+         req.connection.destroy();
+       }
+     });
+
+     req.on("end", () => {
+       let data = qs.parse(body);
+
+       getAllFacilitations(data.day, data.month, data.year, (err, facilitations) => {
+         if (!err) {
+           res.end(JSON.stringify(facilitations));
+         }
+       });
      });
      return 1;
    }
@@ -519,7 +541,7 @@ function approveAbsence(absenceId, callback) {
     if (err) {
       console.log(err.stack);
       callback(true);
-    } else{
+    } else {
       callback(null);
     }
   });
@@ -530,8 +552,19 @@ function denyAbsence(absenceId, callback) {
     if (err) {
       console.log(err.stack);
       callback(true);
-    } else{
+    } else {
       callback(null);
+    }
+  });
+}
+
+function getAllFacilitations(day, month, year, callback) {
+  db.query(`SELECT firstname, lastname, roomid, users.userid, timestart, timeend FROM facilitations, users WHERE users.userid = facilitations.userid AND day = ${day} AND month = ${month} AND year = ${year}`, (err, res) => {
+    if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else {
+      callback(null, res.rows);
     }
   });
 }
