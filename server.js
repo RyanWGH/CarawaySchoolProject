@@ -202,7 +202,7 @@ const userEndpoints = {
         console.log("invalid session trying to sign up");
         return;
       }
-
+		//converting the information given by the user into "data"
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -223,6 +223,60 @@ const userEndpoints = {
 
     return 1;
   },
+  
+  "/DonateHours": (req, res, role) => {
+  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+  	//getting the info from the webpage(user)
+  	lookupSession(req, res, sessionID, (validSession, role, user) => {
+   //checking if the session ID is valid
+      if (!validSession) {
+        console.log("invalid session trying to sign up");
+        return;
+      }
+	let body = '';
+  	req.on("data",(data) => {
+  	body += data;
+  		if (body.length > 1e6) {
+  			req.connection.destroy();
+  		}
+  	});
+  	req.on("end", () => {
+  	let data = qs.parse(body);
+  	//trying to get the familyId from the user
+  	console.log("before getFamilyId");
+  	console.log(user.userid);
+  	getFamilyId(user.userid, (err, userFamilyId) => {
+  		//console.log(userFamilyId);
+  		if (err) {
+  			console.log(err.stack);
+      	return;
+  			}	else{
+  				//use the familyUnitId obtained into the donate hours function
+  				console.log("Time given");
+  				console.log(data.Time);
+  				console.log("Donating Family ID");
+  				console.log(userFamilyId);
+  				donateHours(userFamilyId, data.Time, data.Family, (err) => {
+  				console.log('a');
+  				if (!err) {
+				res.end("Hours successfully donated");
+   			}
+  				});
+  			}
+      	});
+   	});
+   	});
+		return 1;
+	},
+	
+	"/getfamilies": (req, res, role) => {
+    getFamilyNames((err, names) => {
+      if (!err) {
+        res.end(JSON.stringify(names));
+      }
+    });
+    return 1;
+  }
 };
 
 const teacherEndpoints = {
@@ -527,14 +581,66 @@ function approveAbsence(absenceId, callback) {
 
 function denyAbsence(absenceId, callback) {
 	db.query(`UPDATE absences set status = 0 WHERE absenceId = ${absenceId}`, (err) => {
-    if (err) {
+   if (err) {
       console.log(err.stack);
       callback(true);
-    } else{
+	}	else{
       callback(null);
-    }
-  });
+    	}
+  	});
 }
+
+//Getting and returning the familyUnitId from the table using the userid
+function getFamilyId (userId, callback){
+	db.query(`SELECT familyUnitId from familyMembers where userId = '${userId}'`, (err, res) => {
+   if (err) {
+      console.log(err.stack);
+      callback(true);
+   }	else {
+      callback(null, res.rows[0].familyunitid)
+		}
+   });
+}
+
+//Updating the weekly hours for the donating family and the recieving family
+function donateHours(donatingFamilyId, hours, targetFamilyId, callback) {
+	console.log("DOnating Hours");
+	//Substract the things from the donating family
+   db.query(`UPDATE familyunits set 
+	weeklyhours = weeklyhours - ${hours}, 
+	weeklyhoursdonated = weeklyhoursdonated + ${hours}, 
+	weeklydonation = weeklydonation + ${hours}, 
+	monthlyhours = monthlyhours - ${hours},
+	monthlyhoursdonated = monthlyhoursdonated + ${hours}, 
+	monthlydonation = monthlydonation + ${hours}, 
+	yearlyhours = yearlyhours - ${hours}, 
+	yearlyhoursdonated = yearlyhoursdonated + ${hours}, 
+	yearlydonation = yearlydonation + ${hours}  
+	WHERE familyUnitId = ${donatingFamilyId}`, (err) => {
+	console.log("How many times?");
+   if (err) {
+   	console.log(err.stack);
+      callback(true);
+   } 	else {
+   	//Adding hours to the recieving family
+   	console.log("Recieving Hours");
+   	db.query(`UPDATE familyunits set 
+   	weeklyhours = weeklyhours + ${hours},
+		monthlyhours = monthlyhours + ${hours}, 
+		yearlyhours = yearlyhours + ${hours} 
+   	WHERE familyUnitId = ${targetFamilyId}`, (err) => {
+      if (err) {
+          console.log(err.stack);
+          callback(true);
+        } 	else {
+          callback(null);
+        		}
+        });
+			}
+	});
+}
+	
+	
 
 function serveFile(req, res, pathname) {
   let path = `.${pathname}`;
