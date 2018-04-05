@@ -15,37 +15,35 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/admin">Caraway</a>
+      <a class="navbar-brand" href="/main">Caraway</a>
     </div>
     <ul class="nav navbar-nav navbar-left">
-      <li><a href="/admin">Home</a></li>
+      <li><a href="/main">Home</a></li>
       <li><a href="/monthSchedule">Schedule</a></li>
-      <li><a href="/totalStats">Total Statistics</a></li>
-      <li><a href="/weekStats">Weekly Statistics</a></li>
-      <li><a href="/addFamily">Edit Family</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a href="/requests">Request Absence</a></li>
+      <li><a href="/donate">Donate Hours</a></li>
+      <li><a href="/CreateFacilitator">Create Facilitator</a></li>
+      <li><a href="/contact">Contact</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
-		<li class="active"><a href="#">Account Settings</a></li>
+		<li class="active"><a href="/AccountSettings">Account Settings</a></li>
 		<li><a href="/logout">Logout</a></li>
 	</u1>
   </div>
 </nav>
 
 <main role="main" class="container">
-<form action=/AddFamily method="get" id="AddFamilyForm">
+<form action=/changepass method="post" id="ChangePasswordForm">
   <p></p>
   <label for="LastName">Current password: </label>
-  <input type="password" class="form-control" id="LastName" name="LastName" form="AddFamilyForm" style="width: 275px;">
+  <input type="password" class="form-control" id="CurrentPassword" name="CurrentPassword" form="ChangePasswordForm" style="width: 275px;">
   <p></p>
   <label for="FirstName">New Password: </label>
-  <input type="password" class="form-control" id="FirstName" name="FirstName" form="AddFamilyForm" style="width: 275px;">
+  <input type="password" class="form-control" id="NewPassword" name="NewPassword" form="ChangePasswordForm" style="width: 275px;">
   <p></p>
 		<label for="Phone">Repeat Password: </label>
-		<input type="password" class="form-control" id="Phone" name="Phone" form="AddFamilyForm" style="width: 275px;">
+		<input type="password" class="form-control" id="RepeatPassword" name="RepeatPassword" form="ChangePasswordForm" style="width: 275px;">
 		  <p></p>
-	      <button type="submit" form="loginform" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
-		  <p></p>
-		  <button type="submit" form="loginform" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
+		  <button type="submit" form="ChangePasswordForm" formaction="/UpdatePassword" method="post" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
 	  	  </div>
 </main>
