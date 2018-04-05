@@ -29,17 +29,12 @@
 </nav>
 
 
-<form class="container" action="/Testing" method="get" id="Donateform" align="center">
+<form class="container" action="/DonateHours" method="post" id="Donateform" align="center">
   <p>Which family would you like to donate hours to?</p>
   <form>
     <div class="form-group" align=center>  
     <label for="Family">Family (select one):</label>
 	<select class="form-control" id="Family" name="Family" 	form="Donateform" style="width: 150px;">		
-		<option>Hancock</option>
-		<option>Whitely</option>
-		<option>Smith</option>
-		<option>Leblanc</option>
-		<option>Ferris</option>
     </select>
   </div>
   <br>
@@ -53,5 +48,17 @@
       <div align=center>
     <button type="submit" form="Donateform" value="Submit" class="btn btn-primary">Submit</button>
   </div>
+  <script>
+  $(document).ready(() => {
+    console.log('a');
+    $.get("/getfamilies", (data) => {
+	      let names = JSON.parse(data);
+        console.log(names);
+				$("#Family").empty();
+				for (let i of names) {
+					$("#Family").append(`<option value=${i.familyunitid}>${i.lastname} (${i.firstname})</option>`);
+				}
+	    });
+  });</script>
 </body>
 </html>
