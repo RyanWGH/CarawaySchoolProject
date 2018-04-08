@@ -18,11 +18,11 @@
       <a class="navbar-brand" href="/admin">Caraway</a>
     </div>
     <ul class="nav navbar-nav navbar-left">
-      <li><a href="/admin">Home</a></li>
+      <li><a href="/main">Home</a></li>
       <li><a href="/monthSchedule">Schedule</a></li>
-      <li><a href="/requests">Request Absence</a></li>
       <li><a href="/donate">Donate Hours</a></li>
-      <li class="active"><a href="/CreateFacilitator">Create Facilitator</a></li>
+      <li><a href="/requests">Request Absence</a></li>
+      <li class="active"><a href="/CreateFacilitator">Create Facilitators</a></li>
       <li><a href="/contact">Contact</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
@@ -33,7 +33,7 @@
 </nav>
 
 <main role="main" class="container">
-<form action=/AddFamily method="post" id="CreateFacilitatorForm">
+<form action="/addNewFacilitator" method="post" id="CreateFacilitatorForm">
 	<div class="row">
 		<div class="col-md-3 mb-3">
   		  <label for="FirstName">First Name: </label>
@@ -45,21 +45,8 @@
 	  </div>
   </div>
   		<p></p>
-	   	<div class="row">
-		<div class="col-md-3 mb-3">
-	        <label for="Family">Family:</label>
-	        <select class="form-control" id="Family" name="Family" form="CreateFacilitatorForm" style="width: 275px;">
-	  		  	<option>Hancock</option>
-	  			<option>Smith</option>
-	  			<option>Chen</option>
-	  			<option>Li</option>
-	  	  </select>
-	  </div>
-		  <div class="col-md-3 mb-3">
 	  		<label for="Phone">Phone Number: </label>
-	  		<input type="text" class="form-control" id="Phone" name="Phone" form="CreateFacilitatorForm" style="width: 275px;">
-		</div>
-	      </div>
+	  		<input type="text" class="form-control" id="Phone" name="Phone" form="CreateFacilitatorForm" style="width: 565px;">
 		  <p></p>
 				  <label for="Email">Email: </label>
 				  <input type="text" class="form-control" id="Email" name="Email" form="CreateFacilitatorForm" style="width: 565px;">
@@ -67,6 +54,6 @@
 				  <label for="Password">Password: </label>
 				  <input type="text" class="form-control" id="Password" name="Password" form="CreateFacilitatorForm" style="width: 565px;">
 		  <p></p>
-	      <button type="submit" form="loginform" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
+	      <button type="submit" form="CreateFacilitatorForm" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>
 </main>
