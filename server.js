@@ -193,6 +193,10 @@ const userEndpoints = {
     serveFile(req, res, CHANGE_PASSWORD(role));
     return 1;
   },
+    "/CreateFacilitator": (req, res, role) => {
+    serveFile(req, res, CREATE_FACILITATOR(role));
+    return 1;
+  },
 
   "/getUpcomingfacilitations": (req, res, role, user) => {
      let body = '';
@@ -349,31 +353,45 @@ const userEndpoints = {
     return 1;
   },
 
-  "/addfacilitator": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+  
+  "/addNewFacilitator": (req, res, role) => {
+   	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
 
-    lookupSession(req, res, sessionID, (validSession) => {
+   	lookupSession(req, res, sessionID, (validSession, role, user) => {
+      //checking if the session ID is valid
       if (!validSession) {
         console.log("invalid session trying to sign up");
         return;
       }
 
-      let body = '';
+   	let body = '';
       req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
+      	body += data;
+      	if (body.length > 1e6) {
+         	req.connection.destroy();
+			}
       });
-
+      
       req.on("end", () => {
-        let data = qs.parse(body);
-        console.log(data);
-        res.end(JSON.stringify(data));
+      	let data = qs.parse(body);
+      	console.log(user);
+      	getFamilyId(user.userid, (err, userFamilyId) => {
+      		if (err) {
+      			console.log(err.stack);
+      			return;
+      		}
+      		else{
+      			console.log("Entering addFacilitator_user");
+      			addNewFacilitator_user(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, userFamilyId, (err) => {
+      				if (!err) {
+      					res.end("New Facilitator Petition Created Successfully");
+      				}
+      			});console.log("4444 if");
+      		}
+      	});
       });
-    });
-
-    return 1;
+      });
+      return 1;
   },
 
   "/request_absence": (req, res, role) => {
@@ -434,11 +452,7 @@ const userEndpoints = {
       	return;
   			}	else{
   				//use the familyUnitId obtained into the donate hours function
-  				console.log("Time given");
-          console.log(data.Time);
-  				console.log("Donating Family ID");
   				donateHours(userFamilyId, data.Time, data.Family, data.day, data.month, data.year, (err) => {
-  				console.log('a');
   				if (!err) {
 				res.end("Hours successfully donated");
    			}
@@ -1040,7 +1054,7 @@ const adminEndpoints = {
 
     req.on("end", () => {
       let data = qs.parse(body);
-
+		//We have to check if the same person registers for the same time twice or + times
       insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
           data.EndTime, data.day, data.month, data.year, (err) => {
             if (!err) {
@@ -1194,7 +1208,50 @@ const adminEndpoints = {
        });
      });
      return 1;
-   }
+   },
+   
+   "/addNewFacilitator": (req, res, role) => {
+   	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+
+   	lookupSession(req, res, sessionID, (validSession) => {
+   	if (!validSession) {
+   		console.log("invalid session trying to sign up");
+      	return;
+   	}
+
+   	let body = '';
+      req.on("data", (data) => {
+      	body += data;
+      	if (body.length > 1e6) {
+         	req.connection.destroy();
+			}
+      });
+      
+      req.on("end", () => {
+      	let data = qs.parse(body);
+      	addNewUser(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, (err) => {
+        		if (err){
+        			console.log(err.stack);
+      			return;
+      		}
+      	});
+        	getUserId(data.FirstName, data.LastName, (err, userId) => {
+  				if (err) {
+  					console.log(err.stack);
+      			return;
+  				}
+  				else{
+  					addNewFacilitator_admin(userId, data.Family, (err) => {
+  						if (!err){
+  							res.end("New User Successfully Added");
+  						}
+        			});
+				}
+      	});
+		})
+		});
+		return 1;
+  	}
 };
 
 function getFamilyNames(callback) {
@@ -1483,8 +1540,62 @@ function donateHours(donatingFamilyId, Time, targetFamilyId, day, month, year, c
 			}
 	});
 }
-	
-	
+
+//Function used by admin to create a new user
+function addNewUser(firstName, lastName, phone, email, password, callback) {
+	db.query(`INSERT INTO users (firstname, lastname, phone, email, pword) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}')`,
+	(err) => 
+	{
+      if(err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    });
+}
+
+//Function used to get the userId of any user using its email
+function getUserId(firstName, lastName, callback) {
+
+	db.query(`SELECT userid FROM users WHERE (firstname = '${firstName}' AND lastname = '${lastName}')`, (err, res) => {
+	if (err) {
+      console.log(err.stack);
+      callback(true);
+   }	else {
+   	//console.log(res.rows[0].userid)
+      callback(null, res.rows[0].userid);
+		}
+   });
+}
+
+//Function used to add new facilitator
+function addNewFacilitator_admin (userId, familyUnitId, callback) {
+	db.query(`INSERT INTO familymembers (userid, familyunitid) VALUES(${userId}, ${familyUnitId})`,
+	(err) => {
+   if(err) {
+   	console.log(err.stack);
+      callback(true);
+   }	else {
+   	callback(null);
+      }
+   });
+}
+
+//Function used by the user to add a new facilitator
+function addNewFacilitator_user (firstName, lastName, phone, email, password, familyUnitId, callback) {
+	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, familyUnitId) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', ${familyUnitId})`,
+	(err) => {
+      if(err) {
+      	console.log("1 if");
+      	console.log(err.stack);
+      	callback(true);
+      } else {
+        callback(null);
+      }
+      console.log("123123123 if");
+    });
+}
 
 function getAllFacilitations(day, month, year, callback) {
   db.query(`SELECT firstname, lastname, roomid, users.userid, timestart, timeend FROM facilitations, users WHERE users.userid = facilitations.userid AND day = ${day} AND month = ${month} AND year = ${year} AND NOT timestart = '' AND NOT timeend = ''`, (err, res) => {
