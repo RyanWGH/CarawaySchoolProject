@@ -3,9 +3,6 @@
 <head>
   <title>Edit Family- Caraway Facilitation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-	  label {display: inline;}
-	  </style>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -35,37 +32,26 @@
   </div>
 </nav>
 
-<main role="main" class="container">
 <form action=/EditFamily method="post" id="EditFamilyform">
-	<div class="row">
-		<div class="col-md-3 mb-3">
+	<div align="center">
+      <label for="Family">Family:</label>
+      <select class="form-control" id="Family" name="Family" form="EditFamilyform" style="width: 275px;">
+	  </select>
+	  <p></p>
   		  <label for="FamilyName">Family Name: </label>
 		  <input type="text" class="form-control" id="FamilyName" name="FamilyName" form="EditFamilyform" style="width: 275px;">
-	  </div>
-  		<div class="col-md-3 mb-3">
-		  <label for="NumberOfChildren">Number Of Children: </label>
-		  <input type="text" class="form-control" id="NumberOfChildren" name="NumberOfChildren" form="EditFamilyform" style="width: 275px;">
-	  </div>
-  </div>
-	   	<div class="row">
-		<div class="col-md-3 mb-3">
-	        <label for="Family">Family:</label>
-	        <select class="form-control" id="Family" name="Family" form="EditFamilyform" style="width: 275px;">
-	  	  </select>
-		</div>
-		<div class="col-md-3 mb-3">
 			<p></p>
 			<button type="submit" formaction="/Familyedit" form="EditFamilyform" class="btn btn-primary btn-lg" method="post" style="width: 275px; height: 50px;">Submit</button>
-	  </div>
-</div>
+				  </div>
+		</form>
 </main>
 <script>
 	$( document ).ready(function(){
-		$.get("/getfamilies", (data) => {
+		$.get("/getNewfamilies", (data) => {
 			let names = JSON.parse(data);
 			$("#Family").empty();
 			for (let i of names) {
-				$("#Family").append(`<option value=${i.familyunitid}>${i.lastname} (${i.firstname})</option>`);
+				$("#Family").append(`<option value=${i.familyunitid}>${i.familyname}</option>`);
 			}
 			$("#Family").change();
 		});

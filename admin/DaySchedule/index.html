@@ -1,5 +1,15 @@
 <!doctype html>
 <html lang="en" class="no-js">
+<style>
+	#block1, #block2
+	{
+		display:inline-block;
+	}
+	.tab1 {position:relative;left:550px;
+		white-space:nowrap;}
+	.tab2 {position:relative;left:740px;
+			white-space:nowrap;}
+	</style>
 <head>
 	<title>Weekly Schedule - Caraway Facilitation</title>
 	<meta charset="UTF-8">
@@ -37,7 +47,8 @@
 	  </div>
 	</nav>
 
-<div align="center"><font size=14 id="schedule-date"></font></div>
+<span class="tab1"><div id="block1" align="center"><font size=14 id="schedule-date"></font></div></span>
+<span class="tab2"><div id="block2" align="right"><button type="button" onclick="location.href= '	/AddFieldTrip'" method="post" id = "PasswordButton" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Book Field Trip</button></div></span>
 
 <div class="cd-schedule loading">
 	<div class="timeline">

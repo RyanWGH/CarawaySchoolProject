@@ -30,7 +30,7 @@
 </nav>
 
 
-<form class="container" action="/DonateHours" method="post" id="Donateform" align="center">
+<form class="container" align="center">
   <p>Which family would you like to donate hours to?</p>
   <form>
     <div class="form-group" align=center>  
@@ -47,19 +47,34 @@
 </form>
 </form>
       <div align=center>
-    <button type="submit" form="Donateform" value="Submit" class="btn btn-primary">Submit</button>
+    <button type="submit" form="Donateform" id="SubmitDonation" value="Submit" class="btn btn-primary">Submit</button>
   </div>
   <script>
   $(document).ready(() => {
     console.log('a');
-    $.get("/getfamilies", (data) => {
+    $.post("/getNewfamilies", (data) => {
 	      let names = JSON.parse(data);
         console.log(names);
 				$("#Family").empty();
 				for (let i of names) {
-					$("#Family").append(`<option value=${i.familyunitid}>${i.lastname} (${i.firstname})</option>`);
+					$("#Family").append(`<option value=${i.familyunitid}>${i.familyname}</option>`);
 				}
 	    });
-  });</script>
+  });
+  
+  $("#SubmitDonation").click(() => {
+	  let date = new Date();
+	  
+	  $.post("/DonateHours", {
+		  day:date.getUTCDate(),
+		  month: date.getUTCMonth()+1,
+		  year: date.getUTCFullYear(),
+		  Time: $("#DonateTime").val(),
+		  Family: $("#Family").val()
+	  }, (data) => {
+		  console.log(data);
+	  });
+  });
+  </script>
 </body>
 </html>

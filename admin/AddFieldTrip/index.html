@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CREATE FAMILY - Caraway Facilitation</title>
+  <title>CREATE Facilitator - Caraway Facilitation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
 	  label {display: inline;}
@@ -24,9 +24,9 @@
       <li><a href="/weekStats">Family Statistics</a></li>
       <li><a href="/PendingAbsences">Pending Absences</a></li>
       <li><a href="/EditFamily">Edit Family</a></li>
-      <li class="active"><a href="/CreateFamily">Create Family</a></li>
+      <li><a href="/CreateFamily">Create Family</a></li>
       <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
-      <li><a href="/CreateFacilitator">Create Facilitators</a></li>
+      <li class="active"><a href="/CreateFacilitator">Create Facilitators</a></li>
     </ul>
 	<u1 class="nav navbar-nav navbar-right">
 		<li><a href="/AccountSettings">Account Settings</a></li>
@@ -35,14 +35,19 @@
   </div>
 </nav>
 <div align="center">
-<form action=/AddFamily method="post" id="AddFamilyForm">
-	<h2>Create a new family</h2>
-	  	<label for="FirstName">Family Name: </label>
-		  <input type="text" class="form-control" id="FamilyName" name="FamilyName" form="AddFamilyForm" style="width: 275px;">
-		  <p></p>
-	      <button type="submit" formaction="/Createfamily" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
+<form action="/AddFamily.php" method="post" id="MakeFieldTrip">
+	        <label for="Family">Rooms:</label>
+	        <select class="form-control" id="Rooms" name="Rooms" form="MakeFieldTrip" style="width: 275px;" multiple>
+	  		  	<option>Red</option>
+	  			<option>Blue</option>
+	  			<option>Green</option>
+	  			<option>Purple</option>
+	  			<option>Grey</option>
+	  	  </select><br>
+		  <input type="checkbox" name="dayType" value="HalfDay">Half Day<br>
+		  <input type="checkbox" name="dayType" value="FullDay">Full Day<br><br>
+	      <button type="submit" formaction="/addNewFieldTrip" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 	  </form>
-	  </div>
+  </div>
+	  	  </div>
 </main>
-</body>
-</html>
