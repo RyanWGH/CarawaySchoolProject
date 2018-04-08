@@ -81,6 +81,16 @@ CREATE TABLE facilitations (
   year integer NOT NULL
 );
 
+CREATE TABLE pendingfacilitators (
+
+  firstName text NOT NULL,
+  lastName text NOT NULL,
+  phone text NOT NULL,
+  email text NOT NULL,
+  pword text NOT NULL,
+  familyUnitId integer NOT NULL
+);
+
 --Create Rooms
 --Room Id's Blue:1 Purple:2 Green:3 Red:4 Grey:5
 INSERT INTO rooms (colour)
