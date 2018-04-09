@@ -177,7 +177,11 @@ The program strives to encourage students to become creative, curious, confident
 			}
 		});
 		
-		$.post('/getDonatedWeeklystats', (data) => {
+		$.post('/getDonatedWeeklystats', {
+			day: date.getUTCDate(),
+			month: date.getUTCMonth()+1,
+			year: date.getUTCFullYear()
+		}, (data) => {
 			let stats = JSON.parse(data);
 			console.log(data);
 			console.log(stats);
@@ -197,7 +201,11 @@ The program strives to encourage students to become creative, curious, confident
 		 			   </tr>`);
 			});
 				
-			$.post('/getDonatedMonthlystats', (data) => {
+			$.post('/getDonatedMonthlystats', {
+				day: date.getUTCDate(),
+				month: date.getUTCMonth()+1,
+				year: date.getUTCFullYear()
+			},  (data) => {
 				let stats = JSON.parse(data);
 				console.log(data);
 				console.log(stats);
@@ -208,7 +216,11 @@ The program strives to encourage students to become creative, curious, confident
 			  		  		<td>${stats[0].donatedsum}</td>
 		  			  </tr>`);
 				});
-				$.post('/getReceivedMonthlystats', (data) => {
+				$.post('/getReceivedMonthlystats', {
+					day: date.getUTCDate(),
+					month: date.getUTCMonth()+1,
+					year: date.getUTCFullYear()
+				},  (data) => {
 					let stats = JSON.parse(data);
 						$("#MonthlyStatistics").append(`
 			  			  <tr>
@@ -217,6 +229,33 @@ The program strives to encourage students to become creative, curious, confident
 			 			   </tr>`);
 				});
 				
+				$.post('/getDonatedYearlystats', {
+						day: date.getUTCDate(),
+						month: date.getUTCMonth()+1,
+						year: date.getUTCFullYear()
+					},  (data) => {
+						let stats = JSON.parse(data);
+						console.log(data);
+						console.log(stats);
+							$("#YearlyStatistics").append(`
+						  		<col width="130">
+						  		  <tr>
+					  		  		<th>Hours Donated</th>
+					  		  		<td>${stats[0].donatedsum}</td>
+				  			  </tr>`);
+						  							});
+						$.post('/getReceivedYearlystats', {
+							day: date.getUTCDate(),
+							month: date.getUTCMonth()+1,
+								year: date.getUTCFullYear()
+						},  (data) => {
+							let stats = JSON.parse(data);
+								$("#YearlyStatistics").append(`
+					  			  <tr>
+					 		  		<th>Hours Received</th>
+						  		  		<td>${stats[0].receivedsum}</td>
+					 			   </tr>`);
+						});
 				
 		});
 	</script>
