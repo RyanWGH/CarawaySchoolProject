@@ -71,7 +71,7 @@
 	      <button id="submit" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>
 <script>
-  $(document).ready(() => {
+  $( document ).ready(function(){
     $.get("/getfamilies", (data) => {
 	     let names = JSON.parse(data);
        $("#Family").empty();
@@ -91,7 +91,7 @@
        }, (data) => {
          if (!data.status) {
            alert("Facilitator successfully created");
-           window.location.assign("/CreateFacilitator");
+           window.location.assign("/main");
          }
        });
      });

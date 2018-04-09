@@ -85,8 +85,6 @@
 						<td><button class="btn btn-primary deny">Deny</button></td>
 						</tr>`);
 				}
-			});
-
 				$('.approve').click(function() {
 					approveAbsence($(this).parent().parent().find('.absenceid').text());
 				});
@@ -94,6 +92,7 @@
 				$('.deny').click(function() {
 					denyAbsence($(this).parent().parent().find('.absenceid').text());
 				});
+			});
 	});
 	</script>
 </body>

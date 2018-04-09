@@ -37,9 +37,9 @@
   </nav>
 
 <div align="center">
-<form action="/AddFamily.php" method="post" id="MakeFieldTrip">
+<form id="MakeFieldTrip">
 	        <label for="Family">Rooms:</label>
-	        <select class="form-control" id="Rooms" name="Rooms" form="MakeFieldTrip" style="width: 275px;" multiple>
+	        <select class="form-control" id="Room" name="Room" form="MakeFieldTrip" style="width: 275px;">
 	  		  	<option>Red</option>
 	  			<option>Blue</option>
 	  			<option>Green</option>
@@ -48,20 +48,38 @@
 	  	  </select><br>
 		  <input type="checkbox" name="dayType" value="HalfDay">Half Day<br>
 		  <input type="checkbox" name="dayType" value="FullDay">Full Day<br><br>
-	      <button type="submit" formaction="/addNewFieldTrip" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
+	      <button id="submitbutton" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 	  </form>
   </div>
   <script>
-  $(document.ready(() => {
-    $.post("/getRoomId", (data) => {
+  $( document ).ready(function(){
+	let date=new Date();
+    $.post("/getRooms", (data) => {
       let colours = JSON.parse(data);
       console.log(colours);
-      $("#Rooms").empty();
+      $("#Room").empty();
       for (let i of colours) {
-        $("#Rooms").append(`<option value=${i.roomid}>${i.colour}</option>`);
+        $("#Room").append(`<option value=${i.roomid}>${i.colour}</option>`);
       }
     });
+	
+    $("#submitbutton").click(function() {
+      $.post("/addNewFieldTrip", {
+		day: date.getUTCDate(),
+		month: date.getUTCMonth()+1,
+		year: date.getUTCFullYear(),
+        Room: $("#Room").val()
+      }, (data) => {
+		  console.log("CHECKING DATA FOR ADDFIELD");
+		  console.log(data);
+		  console.log(data.status);
+		  console.log("checking data");
+		  
+        if (!data.status) {
+          alert("Field Trip successfully added");
+          window.location.assign("/AddFieldTrip");
+        }
+      })
+    });
   });
-  }
-	  	  </div>
-</main>
+  </script>

@@ -33,7 +33,7 @@
 </nav>
 
 <main role="main" class="container">
-<form action="/addNewFacilitator" method="post" id="CreateFacilitatorForm">
+<form id="CreateFacilitatorForm">
 	<div class="row">
 		<div class="col-md-3 mb-3">
   		  <label for="FirstName">First Name: </label>
@@ -52,8 +52,27 @@
 				  <input type="text" class="form-control" id="Email" name="Email" form="CreateFacilitatorForm" style="width: 565px;">
 		  		<p></p>
 				  <label for="Password">Password: </label>
-				  <input type="text" class="form-control" id="Password" name="Password" form="CreateFacilitatorForm" style="width: 565px;">
+				  <input type="password" class="form-control" id="Password" name="Password" form="CreateFacilitatorForm" style="width: 565px;">
 		  <p></p>
-	      <button type="submit" form="CreateFacilitatorForm" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
+	      <button id="submit" form="CreateFacilitatorForm" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>
 </main>
+
+<script>
+	$(document).ready(() => {
+        $('#submit').click(() => {
+          $.post('/addNewFacilitator', {
+            FirstName: $("#FirstName").val(),
+            LastName: $("#LastName").val(),
+            Phone: $("#Phone").val(),
+            Email: $("#Email").val(),
+            Password: $("#Password").val()
+          }, (data) => {
+            if (!data.status) {
+              alert("Facilitator successfully submitted");
+              window.location.assign("/main");
+            }
+          });
+	  });
+	});
+</script>

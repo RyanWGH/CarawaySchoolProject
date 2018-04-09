@@ -178,11 +178,6 @@ const userEndpoints = {
     return 1;
   },
 
-  "/CreateFacilitator": (req, res, role) => {
-    serveFile(req, res, CREATE_FACILITATOR(role));
-    return 1;
-  },
-
   "/AccountSettings": (req, res, role) => {
     serveFile(req, res, ACCOUNT_SETTINGS(role));
     return 1;
@@ -402,10 +397,10 @@ const userEndpoints = {
         getFamilyId(user.userid, (err, userFamilyId) => {
           if (err) {
             console.log(err.stack);
-            return;
+            return;requestAbsence
           }	else {
             //use the familyUnitId obtained into the donate hours function
-  			    donateHours(userFamilyId, data.Time, data.Family, (err) => {
+  			    donateHours(userFamilyId, data.Time, data.Family, data.day, data.month, data.year, (err) => {
               console.log('a');
               if (!err) {
                 res.end(JSON.stringify({status: 0}));
@@ -2114,6 +2109,7 @@ const adminEndpoints = {
 
     req.on("end", () => {
     	let data = qs.parse(body);
+      console.log(data);
     	addNewUser(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, (err) => {
     		if (err) {
     			console.log(err.stack);
@@ -2124,16 +2120,43 @@ const adminEndpoints = {
       			console.log(err.stack);
         		return;
       		} else {
+            console.log(userId);
       			addNewFacilitator_admin(userId, data.Family, (err) => {
       				if (!err){
       					res.end(JSON.stringify({status: 0}));
       				}
+              else{
+                console.log(err.stack);
+              }
             });
     			}
         });
       });
   	});
 		return 1;
+  },
+
+"/addNewFieldTrip": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+      console.log("TEST DATA HERE");
+      console.log(data);
+      addTrip(data.day, data.month, data.year, data.Room, (err) => {
+        console.log("ENTERING ADD TRIP");
+        if (!err) {
+           res.end(JSON.stringify({status: 0}));
+        }
+      });
+    });
+    return 1;
   }
 };
 
@@ -2635,8 +2658,7 @@ function donateHours(donatingFamilyId, Time, targetFamilyId, day, month, year, c
 //Function used by admin to create a new user
 function addNewUser(firstName, lastName, phone, email, password, callback) {
 	db.query(`INSERT INTO users (firstname, lastname, phone, email, pword) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}')`,
-	(err) =>
-	{
+	(err) => {
       if(err) {
         console.log(err.stack);
         callback(true);
@@ -2665,7 +2687,8 @@ function addNewFacilitator_admin (userId, familyUnitId, callback) {
 //2 = Denied
 //0 = Accepted
 function addNewFacilitator_user(firstName, lastName, phone, email, password, familyUnitId, callback) {
-	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, status, familyUnitId) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', 1, ${familyUnitId})`,
+  console.log(firstName, lastName, phone, email, password, familyUnitId);
+	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, familyUnitId, status) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', ${familyUnitId}, 1)`,
 	(err) => {
       if(err) {
       	console.log("1 if");
@@ -2822,6 +2845,22 @@ function getRoomId(callback) {
         callback(null, res.rows);
       }
     });
+}
+
+function addTrip(day, month, year, roomid, callback){
+  console.log(day);
+    console.log(month);
+  console.log(year);
+  console.log(roomid);
+    db.query(`INSERT INTO fieldtrips (day, month, year, roomid) VALUES('${day}', '${month}', '${year}', ${roomid})`,
+  (err) => {
+   if(err) {
+    console.log(err.stack);
+      callback(true);
+   }  else {
+    callback(null);
+      }
+   });
 }
 
 function handleEndpoint(req, res, endpoint, role, user) {

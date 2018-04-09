@@ -71,7 +71,10 @@
 		  Time: $("#DonateTime").val(),
 		  Family: $("#Family").val()
 	  }, (data) => {
-		  console.log(data);
+		  if (!data.status) {
+			  alert("Donation submitted");
+			  window.location.assign("/main");
+		  }
 	  });
   });
   </script>

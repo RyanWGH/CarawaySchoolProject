@@ -31,12 +31,27 @@
 
 <p>
 </p>
-<form class="form-inline" align=center action="/request_absence" method="post" id="DonateHours">
+<form class="form-inline" align=center id="DonateHours">
 	<div class="form-group" align=center>
   From: <input type="date" name="FromDate" class="form-control" form="DonateHours" style="width: 200px;" display=inline>
   To: <input type="date" name="ToDate" class="form-control" form="DonateHours" style="width: 200px;">
-  <button type="submit" form="DonateHours" value="Submit" class="btn btn-primary">Submit</button>
+  <button id="submit" class="btn btn-primary">Submit</button>
 </form>
 
 </body>
 </html>
+<script>
+	$(document).ready(() => {
+		$('#submit').click(() => {
+			$.post('/request_absence', {
+				FromDate: $('#FromDate').val(),
+				ToDate: $('#ToDate').val()
+			}, (data) => {
+				if (!data.status) {
+					alert("Absence request submitted");
+					window.location.assign("/main");
+				}
+			});
+		});
+	});
+</script>
