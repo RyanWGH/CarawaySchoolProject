@@ -236,15 +236,7 @@ const userEndpoints = {
     return 1;
    },
 
-  "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/UpdatePassword": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -257,10 +249,9 @@ const userEndpoints = {
         let data = qs.parse(body);
         updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
             if (!err) {
-              res.end("Request successful");
+              res.end(JSON.stringify({status: 0}));
             }
             });
-      });
     });
 
     return 1;
@@ -281,7 +272,7 @@ const userEndpoints = {
       insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
           data.EndTime, data.day, data.month, data.year, (err) => {
             if (!err) {
-              res.end("Facilitation successfully added");
+              res.end(JSON.stringify({status: 0}));
             }
           });
     });
@@ -303,22 +294,14 @@ const userEndpoints = {
       deleteFacilitation(data.Facilitator, data.roomid, data.StartTime,
         data.EndTime, data.day, data.month, data.year, (err) => {
           if (!err) {
-            res.end("Facilitation successfully deleted");
+            res.end(JSON.stringify({status: 0}));
           }
         });
     });
     return 1;
   },
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/EditAccountSettings": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -331,25 +314,15 @@ const userEndpoints = {
         let data = qs.parse(body);
         editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
             if (!err) {
-              res.end("Request successfully added");
+              res.end(JSON.stringify({status: 0}));
             }
             });
-      });
     });
 
     return 1;
   },
 
-  "/addNewFacilitator": (req, res, role) => {
-   	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-   	lookupSession(req, res, sessionID, (validSession, role, user) => {
-      //checking if the session ID is valid
-      if (!validSession) {
-        console.log("invalid session trying to sign up");
-        return;
-      }
-
+  "/addNewFacilitator": (req, res, role, user) => {
    	let body = '';
       req.on("data", (data) => {
       	body += data;
@@ -367,59 +340,38 @@ const userEndpoints = {
       			return;
       		}
       		else{
-      			console.log("Entering addFacilitator_user");
       			addNewFacilitator_user(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, userFamilyId, (err) => {
       				if (!err) {
-      					res.end("New Facilitator Petition Created Successfully");
+      					res.end(JSON.stringify({status: 0}));
       				}
-      			});console.log("4444 if");
+      			});
       		}
       	});
-      });
       });
       return 1;
   },
 
-  "/request_absence": (req, res, role) => {
-  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-  	//getting the info from the webpage(user)
-  	lookupSession(req, res, sessionID, (validSession, role, user) => {
-      //checking if the session ID is valid
-      if (!validSession) {
-        console.log("invalid session trying to sign up");
-        return;
+  "/request_absence": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-		//converting the information given by the user into "data"
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        requestAbsence( user.userid, data.FromDate, data.ToDate, (err) => {
-            if (!err) {
-              res.end("Request successfully added");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      requestAbsence( user.userid, data.FromDate, data.ToDate, (err) => {
+        if (!err) {
+          res.end(JSON.stringify({status: 0}));
+        }
+      });
+    });
     return 1;
   },
 
-  "/DonateHours": (req, res, role) => {
-  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-  	//getting the info from the webpage(user)
-  	lookupSession(req, res, sessionID, (validSession, role, user) => {
-      //checking if the session ID is valid
-      if (!validSession) {
-        console.log("invalid session trying to donate");
-        return;
-      }
+  "/DonateHours": (req, res, role, user) => {
 	    let body = '';
   	  req.on("data",(data) => {
   	     body += data;
@@ -439,12 +391,11 @@ const userEndpoints = {
   			    donateHours(userFamilyId, data.Time, data.Family, (err) => {
               console.log('a');
               if (!err) {
-                res.end("Hours successfully donated");
+                res.end(JSON.stringify({status: 0}));
               }
             });
           }
         });
-      });
    	});
 		return 1;
 	},
@@ -568,33 +519,23 @@ const teacherEndpoints = {
     return 1;
   },
 
-  "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
+  "/UpdatePassword": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
-            if (!err) {
-              res.end("Request successful");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+        if (!err) {
+          res.end(JSON.stringify({status: 0}));
+        }
+        });
+    });
     return 1;
   },
 
@@ -629,33 +570,23 @@ const teacherEndpoints = {
   },
 
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
+  "/EditAccountSettings": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
-            if (!err) {
-              res.end("Request successfully added");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
+          if (!err) {
+            res.end(JSON.stringify({status: 0}));
+          }
+        });
+    });
     return 1;
   },
 
@@ -687,54 +618,36 @@ const boardEndpoints = {
     serveFile(req, res, MAIN_PAGE(role));
     return 1;
   },
-    "/AccountSettings": (req, res, role) => {
+  "/AccountSettings": (req, res, role) => {
     serveFile(req, res, ACCOUNT_SETTINGS(role));
     return 1;
   },
-    "/ChangePassword": (req, res, role) => {
+  "/ChangePassword": (req, res, role) => {
     serveFile(req, res, CHANGE_PASSWORD(role));
     return 1;
   },
 
-    "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
+  "/UpdatePassword": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
-            if (!err) {
-              res.end("Request successful");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+        if (!err) {
+          res.end(JSON.stringify({status: 0}));
+        }
+      });
+    });
     return 1;
   },
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/EditAccountSettings": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -746,11 +659,10 @@ const boardEndpoints = {
       req.on("end", () => {
         let data = qs.parse(body);
         editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
-            if (!err) {
-              res.end("Request successfully added");
-            }
-            });
-      });
+          if (!err) {
+            res.end(JSON.stringify({status: 0}));
+          }
+        });
     });
 
     return 1;
@@ -842,15 +754,7 @@ const adminEndpoints = {
     return 1;
   },
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/EditAccountSettings": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -863,26 +767,14 @@ const adminEndpoints = {
         let data = qs.parse(body);
         editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
             if (!err) {
-              res.end("Request successfully added");
+              res.end(JSON.stringify({status: 0}));
             }
-            });
+        });
       });
-    });
-
     return 1;
   },
 
-
-
-  "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/UpdatePassword": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -898,11 +790,10 @@ const adminEndpoints = {
               if(message){
                 res.end(message);
               } else{
-              res.end("Request successful");
+              res.end({status: 0});
               }
               }
             });
-      });
     });
 
     return 1;
@@ -1022,7 +913,7 @@ const adminEndpoints = {
       let data = qs.parse(body);
       createFamily(data.FamilyName, (err) => {
         if (!err) {
-          res.end("Family Successfully Created");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1042,7 +933,7 @@ const adminEndpoints = {
       let data = qs.parse(body);
       editFamily(data.FamilyName, data.Family, (err) => {
         if (!err) {
-          res.end("Family Name Successfully Edited");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1062,7 +953,7 @@ const adminEndpoints = {
       let data = qs.parse(body);
       addChild(data.FirstName, data.LastName, data.Family, data.Room, (err) => {
         if (!err) {
-          res.end("Child Successfully Added");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1083,7 +974,7 @@ const adminEndpoints = {
 
       approveAbsence(data.absenceId, (err) => {
         if(!err) {
-          res.end("Absence Succesfully Approved");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1103,7 +994,7 @@ const adminEndpoints = {
   		let data = qs.parse(body);
       denyAbsence(data.absenceId, (err) => {
         if(!err) {
-          res.end("Absence denied");
+          res.end(JSON.stringify({status: 0}));
         }
   	   });
      });
@@ -1133,47 +1024,37 @@ const adminEndpoints = {
    },
 
   "/addNewFacilitator": (req, res, role) => {
-     	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
+   	let body = '';
+    req.on("data", (data) => {
+    	body += data;
+    	if (body.length > 1e6) {
+       	req.connection.destroy();
+			}
+    });
 
-     	lookupSession(req, res, sessionID, (validSession) => {
-     	if (!validSession) {
-     		console.log("invalid session trying to sign up");
-        	return;
-     	}
-
-     	let body = '';
-        req.on("data", (data) => {
-        	body += data;
-        	if (body.length > 1e6) {
-           	req.connection.destroy();
-  			}
+    req.on("end", () => {
+    	let data = qs.parse(body);
+    	addNewUser(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, (err) => {
+    		if (err) {
+    			console.log(err.stack);
+    			return;
+    		}
+        getUserId(data.FirstName, data.LastName, (err, userId) => {
+      		if (err) {
+      			console.log(err.stack);
+        		return;
+      		} else {
+      			addNewFacilitator_admin(userId, data.Family, (err) => {
+      				if (!err){
+      					res.end(JSON.stringify({status: 0}));
+      				}
+            });
+    			}
         });
-
-        req.on("end", () => {
-        	let data = qs.parse(body);
-        	addNewUser(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, (err) => {
-          		if (err){
-          			console.log(err.stack);
-        			return;
-        		}
-        	});
-          	getUserId(data.FirstName, data.LastName, (err, userId) => {
-    				if (err) {
-    					console.log(err.stack);
-        			return;
-    				}
-    				else{
-    					addNewFacilitator_admin(userId, data.Family, (err) => {
-    						if (!err){
-    							res.end("New User Successfully Added");
-    						}
-          			});
-  				}
-        	});
-  		})
-  		});
+      });
+  	});
 		return 1;
-  	}
+  }
 };
 
 function getFamilyNames(callback) {

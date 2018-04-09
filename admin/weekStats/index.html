@@ -15,34 +15,35 @@
 
 <body>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/main">Caraway</a>
-    </div>
-    <ul class="nav navbar-nav navbar-left">
-      <li><a href="/main">Home</a></li>
-      <li><a href="/monthSchedule">Schedule</a></li>
-      <li><a href="/totalStats">Total Statistics</a></li>
-      <li class="active"><a href="/weekStats">Family Statistics</a></li>
-      <li><a href="/PendingAbsences">Pending Absences</a></li>
-      <li><a href="/EditFamily">Edit Family</a></li>
-      <li><a href="/CreateFamily">Create Family</a></li>
-      <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
-      <li><a href="/CreateFacilitator">Create Facilitators</a></li>
-    </ul>
-	<u1 class="nav navbar-nav navbar-right">
-		<li><a href="/AccountSettings">Account Settings</a></li>
-		<li><a href="/logout">Logout</a></li>
-	</u1>
-  </div>
-</nav>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="/main">Caraway</a>
+	    </div>
+	    <ul class="nav navbar-nav navbar-left">
+	      <li><a href="/main">Home</a></li>
+	      <li><a href="/monthSchedule">Schedule</a></li>
+	      <li class="active"><a href="/weekStats">Stats</a></li>
+	      <li><a href="/PendingAbsences">Pending Absences</a></li>
+	      <li><a href="/EditFamily">Edit Family</a></li>
+	      <li><a href="/CreateFamily">Create Family</a></li>
+	      <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
+	      <li><a href="/CreateFacilitator">Create Facilitators</a></li>
+	      <li><a href="/AddChild">Add Child</a></li>
+
+	    </ul>
+		<u1 class="nav navbar-nav navbar-right">
+			<li><a href="/AccountSettings">Account Settings</a></li>
+			<li><a href="/logout">Logout</a></li>
+		</u1>
+	  </div>
+	</nav>
 
 	<link rel="stylesheet" href="/css/tablestyle.css">
 
 	<div id="page">
 	<div align="center"><font size=14><b>Weekly Statistics</b></font></div>
-	
+
 	<ul class="list-group">
 		<table id="familystats">
 			<tr>
@@ -59,7 +60,7 @@
 				<th>Yearly Donation</th>
 			</tr>
 	</ul>
-	
+
 	</div>
 <script>
 	$( document ).ready(function(){
