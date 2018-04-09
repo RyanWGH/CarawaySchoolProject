@@ -51,7 +51,6 @@
   </div>
   <script>
   $(document).ready(() => {
-    console.log('a');
     $.post("/getNewfamilies", (data) => {
 	      let names = JSON.parse(data);
         console.log(names);

@@ -49,5 +49,17 @@
 	      <button type="submit" formaction="/addNewFieldTrip" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 	  </form>
   </div>
+  <script>
+  $(document.ready(() => {
+    $.post("/getRoomId", (data) => {
+      let colours = JSON.parse(data);
+      console.log(colours);
+      $("#Rooms").empty();
+      for (let i of colours) {
+        $("#Rooms").append(`<option value=${i.roomid}>${i.colour}</option>`);
+      }
+    });
+  });
+  }
 	  	  </div>
 </main>

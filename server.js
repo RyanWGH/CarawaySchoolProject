@@ -494,6 +494,15 @@ const userEndpoints = {
     });
     return 1;
   },
+  
+  "/getRoomId": (req, res, role) => {
+  getRoomId((err, colours) => {
+  	if (!err) {
+  		res.end(JSON.stringify(colours));
+  	}
+  });
+  return 1;
+  },
 
 
   "/getNewfamilies": (req, res, role) => {
@@ -1042,7 +1051,17 @@ const adminEndpoints = {
     });
     return 1;
   },
-
+  
+  "/getPendingFacilitatorList": (req, res, role) => {
+    getNewFacilitators((err, pendingfacilitators) => {
+      if(!err) {
+        res.end(JSON.stringify(pendingfacilitators));
+      }
+    });
+    return 1;
+  },
+  
+  
   "/Addfacilitation": (req, res, role) => {
     let body = '';
     req.on("data", (data) => {
@@ -1449,6 +1468,18 @@ function getAbsences(callback){
     });
 }
 
+function getNewFacilitators(callback){
+  db.query(`SELECT pfid, firstname, lastname, phone, email, familyunits.familyunitid from pendingfacilitators, familyunits WHERE familyunits.familyunitid = pendingfacilitators.familyunitid AND status = 1`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
+
 function getFamStats(callback){
     db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
     (err, result) => {
@@ -1583,8 +1614,12 @@ function addNewFacilitator_admin (userId, familyUnitId, callback) {
 }
 
 //Function used by the user to add a new facilitator
+//Status:
+//1 = Pending
+//2 = Denied
+//0 = Accepted
 function addNewFacilitator_user (firstName, lastName, phone, email, password, familyUnitId, callback) {
-	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, familyUnitId) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', ${familyUnitId})`,
+	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, status, familyUnitId) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', 1, ${familyUnitId})`,
 	(err) => {
       if(err) {
       	console.log("1 if");
@@ -1721,6 +1756,17 @@ function lookupSession(req, res, id, callback) {
       }
     }
   });
+}
+
+function getRoomId(callback) {
+  db.query(`SELECT roomid, colour FROM rooms`, (err, res) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
 }
 
 function handleEndpoint(req, res, endpoint, role, user) {
