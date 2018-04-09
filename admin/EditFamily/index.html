@@ -9,31 +9,31 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/main">Caraway</a>
-    </div>
-    <ul class="nav navbar-nav navbar-left">
-      <li><a href="/main">Home</a></li>
-      <li><a href="/monthSchedule">Schedule</a></li>
-      <li><a href="/totalStats">Total Stats</a></li>
-      <li><a href="/weekStats">Family Stats</a></li>
-      <li><a href="/PendingAbsences">Pending Absences</a></li>
-      <li class="active"><a href="/EditFamily">Edit Family</a></li>
-      <li><a href="/CreateFamily">Create Family</a></li>
-      <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
-      <li><a href="/CreateFacilitator">Create Facilitators</a></li>
-      <li><a href="/AddChild">Add Child</a></li>
-    </ul>
-	<u1 class="nav navbar-nav navbar-right">
-		<li><a href="/AccountSettings">Account Settings</a></li>
-		<li><a href="/logout">Logout</a></li>
-	</u1>
-  </div>
-</nav>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/main">Caraway</a>
+      </div>
+      <ul class="nav navbar-nav navbar-left">
+        <li><a href="/main">Home</a></li>
+        <li><a href="/monthSchedule">Schedule</a></li>
+        <li><a href="/weekStats">Stats</a></li>
+        <li><a href="/PendingAbsences">Pending Absences</a></li>
+        <li class="active"><a href="/EditFamily">Edit Family</a></li>
+        <li><a href="/CreateFamily">Create Family</a></li>
+        <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
+        <li><a href="/CreateFacilitator">Create Facilitators</a></li>
+        <li><a href="/AddChild">Add Child</a></li>
 
-<form action=/EditFamily method="post" id="EditFamilyform">
+      </ul>
+  	<u1 class="nav navbar-nav navbar-right">
+  		<li><a href="/AccountSettings">Account Settings</a></li>
+  		<li><a href="/logout">Logout</a></li>
+  	</u1>
+    </div>
+  </nav>
+
+<form id="EditFamilyform">
 	<div align="center">
       <label for="Family">Family:</label>
       <select class="form-control" id="Family" name="Family" form="EditFamilyform" style="width: 275px;">
@@ -42,12 +42,21 @@
   		  <label for="FamilyName">Family Name: </label>
 		  <input type="text" class="form-control" id="FamilyName" name="FamilyName" form="EditFamilyform" style="width: 275px;">
 			<p></p>
-			<button type="submit" formaction="/Familyedit" form="EditFamilyform" class="btn btn-primary btn-lg" method="post" style="width: 275px; height: 50px;">Submit</button>
+			<button id="submit" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 				  </div>
 		</form>
 </main>
 <script>
 	$( document ).ready(function(){
+    $("#submit").click(function() {
+      $.post("/Familyedit", {Family: $("#Family").val(), FamilyName: $("#FamilyName").val()}, (data) => {
+        if (!data.status) {
+          alert("Family named successfully changed");
+          window.location.assign("/EditFamily");
+        }
+      });
+    });
+
 		$.get("/getNewfamilies", (data) => {
 			let names = JSON.parse(data);
 			$("#Family").empty();
@@ -57,7 +66,7 @@
 			$("#Family").change();
 		});
 	});
-	
+
 	</script>
 </body>
 </html>

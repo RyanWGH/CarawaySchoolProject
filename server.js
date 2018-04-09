@@ -6,6 +6,7 @@ const qs = require("querystring");
 const cookie = require("cookie");
 const crypto = require("crypto");
 const { Client } = require("pg");
+const async = require("async");
 
 const db = new Client();
 db.connect();
@@ -249,15 +250,7 @@ const userEndpoints = {
     return 1;
    },
 
-  "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/UpdatePassword": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -270,10 +263,9 @@ const userEndpoints = {
         let data = qs.parse(body);
         updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
             if (!err) {
-              res.end("Request successful");
+              res.end(JSON.stringify({status: 0}));
             }
             });
-      });
     });
 
     return 1;
@@ -294,7 +286,7 @@ const userEndpoints = {
       insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
           data.EndTime, data.day, data.month, data.year, (err) => {
             if (!err) {
-              res.end("Facilitation successfully added");
+              res.end(JSON.stringify({status: 0}));
             }
           });
     });
@@ -316,22 +308,14 @@ const userEndpoints = {
       deleteFacilitation(data.Facilitator, data.roomid, data.StartTime,
         data.EndTime, data.day, data.month, data.year, (err) => {
           if (!err) {
-            res.end("Facilitation successfully deleted");
+            res.end(JSON.stringify({status: 0}));
           }
         });
     });
     return 1;
   },
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/EditAccountSettings": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -344,26 +328,16 @@ const userEndpoints = {
         let data = qs.parse(body);
         editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
             if (!err) {
-              res.end("Request successfully added");
+              res.end(JSON.stringify({status: 0}));
             }
             });
-      });
     });
 
     return 1;
   },
 
-  
-  "/addNewFacilitator": (req, res, role) => {
-   	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
 
-   	lookupSession(req, res, sessionID, (validSession, role, user) => {
-      //checking if the session ID is valid
-      if (!validSession) {
-        console.log("invalid session trying to sign up");
-        return;
-      }
-
+  "/addNewFacilitator": (req, res, role, user) => {
    	let body = '';
       req.on("data", (data) => {
       	body += data;
@@ -381,85 +355,62 @@ const userEndpoints = {
       			return;
       		}
       		else{
-      			console.log("Entering addFacilitator_user");
       			addNewFacilitator_user(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, userFamilyId, (err) => {
       				if (!err) {
-      					res.end("New Facilitator Petition Created Successfully");
+      					res.end(JSON.stringify({status: 0}));
       				}
-      			});console.log("4444 if");
+      			});
       		}
       	});
-      });
       });
       return 1;
   },
 
-  "/request_absence": (req, res, role) => {
-  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-  	//getting the info from the webpage(user)
-  	lookupSession(req, res, sessionID, (validSession, role, user) => {
-      //checking if the session ID is valid
-      if (!validSession) {
-        console.log("invalid session trying to sign up");
-        return;
+  "/request_absence": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-		//converting the information given by the user into "data"
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        requestAbsence( user.userid, data.FromDate, data.ToDate, (err) => {
-            if (!err) {
-              res.end("Request successfully added");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      requestAbsence( user.userid, data.FromDate, data.ToDate, (err) => {
+        if (!err) {
+          res.end(JSON.stringify({status: 0}));
+        }
+      });
+    });
     return 1;
   },
-  
-  "/DonateHours": (req, res, role) => {
-  	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-  	//getting the info from the webpage(user)
-  	lookupSession(req, res, sessionID, (validSession, role, user) => {
-   //checking if the session ID is valid
-      if (!validSession) {
-        console.log("invalid session trying to sign up");
-        return;
-      }
-	let body = '';
-  	req.on("data",(data) => {
-  	body += data;
-  		if (body.length > 1e6) {
-  			req.connection.destroy();
-  		}
-  	});
-  	req.on("end", () => {
-  	let data = qs.parse(body);
 
-  	//trying to get the familyId from the user
-  	getFamilyId(user.userid, (err, userFamilyId) => {
-  		//console.log(userFamilyId);
-  		if (err) {
-  			console.log(err.stack);
-      	return;
-  			}	else{
-  				//use the familyUnitId obtained into the donate hours function
-  				donateHours(userFamilyId, data.Time, data.Family, data.day, data.month, data.year, (err) => {
-  				if (!err) {
-				res.end("Hours successfully donated");
-   			}
-  				});
-  			}
-      	});
-   	});
+  "/DonateHours": (req, res, role, user) => {
+	    let body = '';
+  	  req.on("data",(data) => {
+  	     body += data;
+         if (body.length > 1e6) {
+           req.connection.destroy();
+         }
+      });
+      req.on("end", () => {
+        let data = qs.parse(body);
+        //trying to get the familyId from the user
+        getFamilyId(user.userid, (err, userFamilyId) => {
+          if (err) {
+            console.log(err.stack);
+            return;
+          }	else {
+            //use the familyUnitId obtained into the donate hours function
+  			    donateHours(userFamilyId, data.Time, data.Family, (err) => {
+              console.log('a');
+              if (!err) {
+                res.end(JSON.stringify({status: 0}));
+              }
+            });
+          }
+        });
    	});
 		return 1;
 	},
@@ -589,7 +540,118 @@ const userEndpoints = {
        });
      });
      return 1;
-   }
+   },
+   
+  "/getDonatedMonthlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getDonatedHoursMonthly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
+    "/getReceivedMonthlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getReceivedHoursMonthly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
+
+  "/getDonatedYearlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getDonatedHoursYearly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
+    "/getReceivedYearlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getReceivedHoursYearly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  }
 };
 
 const teacherEndpoints = {
@@ -611,7 +673,7 @@ const teacherEndpoints = {
     return 1;
   },
 
-    "/Addfacilitation": (req, res, role) => {
+  "/UpdatePassword": (req, res, role, user) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -620,68 +682,15 @@ const teacherEndpoints = {
       }
     });
 
-    req.on("end", () => {
-      let data = qs.parse(body);
-
-      insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
-          data.EndTime, data.day, data.month, data.year, (err) => {
-            if (!err) {
-              res.end("Facilitation successfully added");
-            }
-          });
-    });
-    return 1;
-  },
-
-  "/Deletefacilitation": (req, res, role) => {
-    let body = '';
-    req.on("data", (data) => {
-      body += data;
-      if (body.length > 1e6) {
-        req.connection.destroy();
-      }
-    });
 
     req.on("end", () => {
       let data = qs.parse(body);
-
-      deleteFacilitation(data.Facilitator, data.roomid, data.StartTime,
-        data.EndTime, data.day, data.month, data.year, (err) => {
-          if (!err) {
-            res.end("Facilitation successfully deleted");
-          }
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+        if (!err) {
+          res.end(JSON.stringify({status: 0}));
+        }
         });
     });
-    return 1;
-  },
-
-    "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
-            if (!err) {
-              res.end("Request successful");
-            }
-            });
-      });
-    });
-
     return 1;
   },
 
@@ -716,33 +725,23 @@ const teacherEndpoints = {
   },
 
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
+  "/EditAccountSettings": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
-            if (!err) {
-              res.end("Request successfully added");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
+          if (!err) {
+            res.end(JSON.stringify({status: 0}));
+          }
+        });
+    });
     return 1;
   },
 
@@ -774,54 +773,36 @@ const boardEndpoints = {
     serveFile(req, res, MAIN_PAGE(role));
     return 1;
   },
-    "/AccountSettings": (req, res, role) => {
+  "/AccountSettings": (req, res, role) => {
     serveFile(req, res, ACCOUNT_SETTINGS(role));
     return 1;
   },
-    "/ChangePassword": (req, res, role) => {
+  "/ChangePassword": (req, res, role) => {
     serveFile(req, res, CHANGE_PASSWORD(role));
     return 1;
   },
 
-    "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
+  "/UpdatePassword": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
       }
-
-      let body = '';
-      req.on("data", (data) => {
-        body += data;
-        if (body.length > 1e6) {
-          req.connection.destroy();
-        }
-      });
-
-      req.on("end", () => {
-        let data = qs.parse(body);
-        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
-            if (!err) {
-              res.end("Request successful");
-            }
-            });
-      });
     });
 
+    req.on("end", () => {
+      let data = qs.parse(body);
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+        if (!err) {
+          res.end(JSON.stringify({status: 0}));
+        }
+      });
+    });
     return 1;
   },
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/EditAccountSettings": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -833,11 +814,10 @@ const boardEndpoints = {
       req.on("end", () => {
         let data = qs.parse(body);
         editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
-            if (!err) {
-              res.end("Request successfully added");
-            }
-            });
-      });
+          if (!err) {
+            res.end(JSON.stringify({status: 0}));
+          }
+        });
     });
 
     return 1;
@@ -928,15 +908,7 @@ const adminEndpoints = {
     return 1;
   },
 
-  "/EditAccountSettings": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/EditAccountSettings": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -949,26 +921,14 @@ const adminEndpoints = {
         let data = qs.parse(body);
         editAccountSettings( user.userid, data.LastName, data.FirstName, data.Phone, (err) => {
             if (!err) {
-              res.end("Request successfully added");
+              res.end(JSON.stringify({status: 0}));
             }
-            });
+        });
       });
-    });
-
     return 1;
   },
 
-
-
-  "/UpdatePassword": (req, res, role) => {
-    let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
-
-    lookupSession(req, res, sessionID, (validSession, role, user) => {
-      if (!validSession) {
-        console.log("invalid session trying to edit");
-        return;
-      }
-
+  "/UpdatePassword": (req, res, role, user) => {
       let body = '';
       req.on("data", (data) => {
         body += data;
@@ -984,16 +944,14 @@ const adminEndpoints = {
               if(message){
                 res.end(message);
               } else{
-              res.end("Request successful");
+              res.end({status: 0});
               }
               }
             });
-      });
     });
 
     return 1;
   },
-
 
   "/getfamilies": (req, res, role) => {
     getFamilyNames((err, names) => {
@@ -1010,6 +968,381 @@ const adminEndpoints = {
         res.end(JSON.stringify(names));
       }
     });
+    return 1;
+  },
+
+
+  "/getWeeklyFamilyStats": (req, res, role) => {
+    var famTimes = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          console.log(FAMS);
+          async.each(FAMS, function(fam, cb) {
+            getFamilyWeeklyTimes(fam.familyunitid, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                famTimes[fam.familyunitid] = {name: fam.familyname, totalHours: sum};
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(famTimes));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getMonthlyFamilyStats": (req, res, role) => {
+    var famTimes = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          console.log(FAMS);
+          async.each(FAMS, function(fam, cb) {
+            getFamilyMonthlyTimes(fam.familyunitid, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                famTimes[fam.familyunitid] = {name: fam.familyname, totalHours: sum};
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(famTimes));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+    "/getYearlyFamilyStats": (req, res, role) => {
+    var famTimes = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          console.log(FAMS);
+          async.each(FAMS, function(fam, cb) {
+            getFamilyYearlyTimes(fam.familyunitid, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                famTimes[fam.familyunitid] = {name: fam.familyname, totalHours: sum};
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(famTimes));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getDonatedWeeklystats": (req, res, role) => {
+    var donated = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getDonatedHoursWeekly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                donated[fam.familyunitid] = stats;
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(donated));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getReceivedWeeklystats": (req, res, role) => {
+    var received = {};
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getReceivedHoursWeekly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                received[fam.familyunitid] = stats;
+                console.log(stats);
+                console.log(received);
+                console.log(received[fam.familyunitid]);
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(received));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getDonatedMonthlystats": (req, res, role) => {
+    var donated = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getDonatedHoursMonthly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                donated[fam.familyunitid] = stats;
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(donated));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getReceivedMonthlystats": (req, res, role) => {
+    var received = {};
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getReceivedHoursMonthly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                received[fam.familyunitid] = stats;
+                console.log(stats);
+                console.log(received);
+                console.log(received[fam.familyunitid]);
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(received));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+<<<<<<< HEAD
+
+  "/getfamilies": (req, res, role) => {
+    getFamilyNames((err, names) => {
+      if (!err) {
+        res.end(JSON.stringify(names));
+=======
+  "/getDonatedYearlystats": (req, res, role) => {
+    var donated = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+>>>>>>> upstream/master
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getDonatedHoursYearly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                donated[fam.familyunitid] = stats;
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(donated));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getReceivedYearlystats": (req, res, role) => {
+    var received = {};
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getReceivedHoursYearly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                received[fam.familyunitid] = stats;
+                console.log(stats);
+                console.log(received);
+                console.log(received[fam.familyunitid]);
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(received));
+            }
+          });
+        }
+      });
+    });    
     return 1;
   },
 
@@ -1120,7 +1453,7 @@ const adminEndpoints = {
       let data = qs.parse(body);
       createFamily(data.FamilyName, (err) => {
         if (!err) {
-          res.end("Family Successfully Created");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1140,7 +1473,7 @@ const adminEndpoints = {
       let data = qs.parse(body);
       editFamily(data.FamilyName, data.Family, (err) => {
         if (!err) {
-          res.end("Family Name Successfully Edited");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1160,7 +1493,7 @@ const adminEndpoints = {
       let data = qs.parse(body);
       addChild(data.FirstName, data.LastName, data.Family, data.Room, (err) => {
         if (!err) {
-          res.end("Child Successfully Added");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1223,7 +1556,7 @@ const adminEndpoints = {
 
       approveAbsence(data.absenceId, (err) => {
         if(!err) {
-          res.end("Absence Succesfully Approved");
+          res.end(JSON.stringify({status: 0}));
         }
       });
     });
@@ -1263,7 +1596,7 @@ const adminEndpoints = {
   		let data = qs.parse(body);
       denyAbsence(data.absenceId, (err) => {
         if(!err) {
-          res.end("Absence denied");
+          res.end(JSON.stringify({status: 0}));
         }
   	   });
      });
@@ -1295,6 +1628,7 @@ const adminEndpoints = {
    "/addNewFacilitator": (req, res, role) => {
    	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
 
+<<<<<<< HEAD
    	lookupSession(req, res, sessionID, (validSession) => {
    	if (!validSession) {
    		console.log("invalid session trying to sign up");
@@ -1332,8 +1666,40 @@ const adminEndpoints = {
       	});
 		})
 		});
+=======
+  "/addNewFacilitator": (req, res, role) => {
+   	let body = '';
+    req.on("data", (data) => {
+    	body += data;
+    	if (body.length > 1e6) {
+       	req.connection.destroy();
+			}
+    });
+
+    req.on("end", () => {
+    	let data = qs.parse(body);
+    	addNewUser(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, (err) => {
+    		if (err) {
+    			console.log(err.stack);
+    			return;
+    		}
+        getUserId(data.FirstName, data.LastName, (err, userId) => {
+      		if (err) {
+      			console.log(err.stack);
+        		return;
+      		} else {
+      			addNewFacilitator_admin(userId, data.Family, (err) => {
+      				if (!err){
+      					res.end(JSON.stringify({status: 0}));
+      				}
+            });
+    			}
+        });
+      });
+  	});
+>>>>>>> upstream/master
 		return 1;
-  	}
+  }
 };
 
 function getFamilyNames(callback) {
@@ -1362,6 +1728,65 @@ function getNewFamilyNames(callback) {
       }
     });
 }
+
+function getFamilyWeeklyTimes(famid, callback) {
+  console.log(famid);
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  console.log("THIS IS FIRST AND LAST DAY");
+  console.log(firstday.getDate(), lastday.getDate());
+  console.log(firstday.getMonth(), lastday.getMonth());
+  console.log(firstday.getFullYear(), lastday.getFullYear());
+  console.log("-------");
+  db.query(`SELECT timestart, timeend FROM facilitations, familymembers WHERE familymembers.userid = facilitations.userid AND familyunitid=${famid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`, (err, res) => {
+    if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
+function getFamilyMonthlyTimes(famid, callback) {
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  console.log("THIS IS FIRST AND LAST DAY");
+  console.log(firstday.getDate(), lastday.getDate());
+  console.log(firstday.getMonth(), lastday.getMonth());
+  console.log(firstday.getFullYear(), lastday.getFullYear());
+  console.log("-------");
+  db.query(`SELECT timestart, timeend FROM facilitations, familymembers WHERE familymembers.userid = facilitations.userid AND familyunitid=${famid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1}`, (err, res) => {
+    if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
+function getFamilyYearlyTimes(famid, callback) {
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  console.log("THIS IS FIRST AND LAST DAY");
+  console.log(firstday.getDate(), lastday.getDate());
+  console.log(firstday.getMonth(), lastday.getMonth());
+  console.log(firstday.getFullYear(), lastday.getFullYear());
+  console.log("-------");
+  db.query(`SELECT timestart, timeend FROM facilitations, familymembers WHERE familymembers.userid = facilitations.userid AND familyunitid=${famid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()}`, (err, res) => {
+    if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
 
 function getFacilitatorNames(familyid, callback) {
   db.query(`SELECT firstname, lastname, f2.userid
@@ -1492,7 +1917,10 @@ function addChild(first, last, family, room, callback){
 
 function getDonatedHoursWeekly(familyunitid, callback){
   console.log()
-  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid}`,
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1505,7 +1933,10 @@ function getDonatedHoursWeekly(familyunitid, callback){
 }
 
 function getReceivedHoursWeekly(familyunitid, callback){
-  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid}`,
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1517,7 +1948,10 @@ function getReceivedHoursWeekly(familyunitid, callback){
 }
 
 function getTotalHoursWeekly(callback){
-  db.query(`SELECT * from Donations`,
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS totalHours from Donations`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1528,6 +1962,73 @@ function getTotalHoursWeekly(callback){
     });
 }
 
+
+function getDonatedHoursMonthly(familyunitid, callback){
+  console.log()
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        console.log("TESTING FOR HOURS");
+        callback(null, result.rows);
+      }
+    });
+}
+
+<<<<<<< HEAD
+=======
+function getReceivedHoursMonthly(familyunitid, callback){
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
+
+function getDonatedHoursYearly(familyunitid, callback){
+  console.log()
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        console.log("TESTING FOR HOURS");
+        callback(null, result.rows);
+      }
+    });
+}
+
+function getReceivedHoursYearly(familyunitid, callback){
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
+>>>>>>> upstream/master
 function getAbsences(callback){
   db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
     (err, result) => {
@@ -1540,6 +2041,7 @@ function getAbsences(callback){
     });
 }
 
+<<<<<<< HEAD
 function getNewFacilitators(callback){
   db.query(`SELECT pfid, firstname, lastname, phone, email, familyunits.familyunitid from pendingfacilitators, familyunits WHERE familyunits.familyunitid = pendingfacilitators.familyunitid AND status = 1`,
     (err, result) => {
@@ -1554,6 +2056,10 @@ function getNewFacilitators(callback){
 
 function getFamStats(callback){
     db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
+=======
+function getFamStats(famID, callback){
+    db.query(`SELECT timestart, timeend, day, month, year FROM facilitations, familymembers WHERE facilitations.userid = familymembers.userid AND familymembers.familyunitid = ${famID}`,
+>>>>>>> upstream/master
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1652,6 +2158,7 @@ function getFamilyId (userId, callback){
    });
 }
 
+<<<<<<< HEAD
 //Function used to get the userId of any user using its email
 function getUserId(firstName, lastName, callback) {
 
@@ -1675,6 +2182,19 @@ function getPendingFacilitator(pfid, callback) {
 		}
    });
 }
+=======
+function getAllFamilyIds (callback){
+  db.query(`select DISTINCT familyunits.familyunitid, familyname from familymembers, familyunits WHERE familyunits.familyunitid = familymembers.familyunitid`, (err, res) => {
+   if (err) {
+      console.log(err.stack);
+      callback(true);
+   }  else {
+      callback(null, res.rows);
+    }
+   });
+}
+
+>>>>>>> upstream/master
 //Updating the weekly hours for the donating family and the recieving family
 function donateHours(donatingFamilyId, Time, targetFamilyId, day, month, year, callback) {
 	console.log("Donating Hours");
@@ -1792,6 +2312,15 @@ function serveFile(req, res, pathname) {
     });
   });
 }
+
+
+function calculateHours(timestart, timeend){
+    var Start = new Date("01/01/2018 " + timestart);
+    var End = new Date("01/01/2018 " + timeend);
+
+    var Diff = (End - Start)/(1000*60*60);
+    return Diff;
+  }
 
 function encrypt(text) {
   let cipher = crypto.createCipher(ALGORITHM, SECRET);
