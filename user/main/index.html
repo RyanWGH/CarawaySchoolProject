@@ -177,6 +177,14 @@ The program strives to encourage students to become creative, curious, confident
 			}
 		});
 		
+		$.post('/getWeeklyTotalStats', (data) => {
+			let stats = JSON.parse(data);
+				$("#WeeklyStatistics").append(`
+	  			  <tr>
+		  		  		<th>Total Hours</th>
+		  		  		<td>${stats}</td>
+	 			   </tr>`);
+		});
 		$.post('/getDonatedWeeklystats', {
 			day: date.getUTCDate(),
 			month: date.getUTCMonth()+1,
@@ -200,7 +208,16 @@ The program strives to encourage students to become creative, curious, confident
 			  		  		<td>${stats[0].receivedsum}</td>
 		 			   </tr>`);
 			});
+		
 				
+			$.post('/getMonthlyTotalStats', (data) => {
+				let stats = JSON.parse(data);
+					$("#MonthlyStatistics").append(`
+		  			  <tr>
+			  		  		<th>Total Hours</th>
+			  		  		<td>${stats}</td>
+		 			   </tr>`);
+			});	
 			$.post('/getDonatedMonthlystats', {
 				day: date.getUTCDate(),
 				month: date.getUTCMonth()+1,
@@ -229,6 +246,14 @@ The program strives to encourage students to become creative, curious, confident
 			 			   </tr>`);
 				});
 				
+				$.post('/getYearlyTotalStats', (data) => {
+					let stats = JSON.parse(data);
+						$("#YearlyStatistics").append(`
+			  			  <tr>
+				  		  		<th>Total Hours</th>
+				  		  		<td>${stats}</td>
+			 			   </tr>`);
+				});
 				$.post('/getDonatedYearlystats', {
 						day: date.getUTCDate(),
 						month: date.getUTCMonth()+1,
