@@ -56,7 +56,6 @@
 			</tr>
 	</ul>
 </div>
-	</div>
 
 	<script>
 
@@ -84,11 +83,10 @@
 							<td class="lastname-${i.pfid}">${i.lastname}</td>
 							<td class="phone-${i.pfid}">${i.phone}</td>
 							<td class="email-${i.pfid}">${i.email}</td>
-							<td><button type="submit" value="Submit" class="btn btn-primary approve">Accept</button></td>
-							<td><button type="submit" value="Submit" class="btn btn-primary deny">Deny</button></td>
+							<td><button class="btn btn-primary approve">Accept</button></td>
+							<td><button class="btn btn-primary deny">Deny</button></td>
 							</tr>`);
 					}
-				});
 
           $('.approve').click(function() {
 					approveFacilitator($(this).parent().parent().find('.pfid').text());
@@ -97,6 +95,7 @@
 				$('.deny').click(function() {
 					denyFacilitator($(this).parent().parent().find('.pfid').text());
 				});
+			});
 
 		});
 		</script>

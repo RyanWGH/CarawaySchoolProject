@@ -33,194 +33,107 @@
 	<link rel="stylesheet" href="/css/tablestyle.css">
 
 	<div id="page">
-	<div align="center"><font size=14><b>Total Statistics</b></font></div>
-	<table>
-		<tr>
-			<th>Month</th>
-			<th>Volunteer Hours</th>
-			<th>Cancelled Volunteer Hours</th>
-			<th>Overflow Hours</th>
-			<th>Donated Hours</th>
-			<th>Volunteer Slots Not Filled</th>
-			<th>Purple Hours</th>
-			<th>Blue Hours</th>
-			<th>Green Hours</th>
-			<th>Red Hours</th>
-			<th>Gray Hours</th>
-		</tr>
-		<tr>
-			<td>Total</td>
-			<td>10</td>
-			<td>456</td>
-			<td>222</td>
-			<td>3</td>
-			<td>1979</td>
-			<td>222</td>
-			<td>3</td>
-		  	<td>2</td>
-			<td>456</td>
-			<td>222</td>
-		</tr>
-		<tr>
-		  <td>January</td>
-		  <td>10</td>
-		  <td>123</td>
-		  <td>111</td>
-		  <td>2</td>
-		  <td>10</td>
-		  <td>456</td>
-		  <td>2</td>
-		  <td>10</td>
-		<td>456</td>
-		<td>222</td>
-		</tr>
-		<tr>
-		  <td>Febuary</td>
-		  <td>10</td>
-		  <td>456</td>
-		  <td>333</td>
-		  <td>1</td>
-		  <td>111</td>
-		  <td>333</td>
-		  <td>3.4</td>
-		  <td>1</td>
-		<td>456</td>
-		<td>222</td>
-		</tr>
-		<tr>
-		  <td>March</td>
-		  <td>10</td>
-		  <td>789</td>
-		  <td>444</td>
-		  <td>0</td>
-		  <td>0</td>
-		  <td>Paris</td>
-		  <td>3.4</td>
-		  <td>3451</td>
-		<td>456</td>
-		<td>222</td>
-		</tr>
-		<tr>
-		  <td>April</td>
-		  <td>10</td>
-		  <td>123</td>
-		  <td>555</td>
-		  <td>0</td>
-		  <td>0</td>
-		  <td>555</td>
-		  <td>1.9</td>
-		  <td>777</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>May</td>
-		  <td>10</td>
-		  <td>456</td>
-		  <td>666</td>
-		  <td>0</td>
-		<td>456</td>
-		  <td>777</td>
-		  <td>1.9</td>
-		  <td>777</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>June</td>
-		  <td>10</td>
-		  <td>123</td>
-		  <td>777</td>
-		  <td>0</td>
-		  <td>10</td>
-		  <td>123</td>
-		  <td>1.9</td>
-		  <td>0</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>July</td>
-		  <td>10</td>
-		  <td>789</td>
-		  <td>888</td>
-		  <td>0</td>
-		  <td>10</td>
-		  <td>999</td>
-		  <td>1.9</td>
-		  <td>0</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>August</td>
-		  <td>10</td>
-		  <td>456</td>
-		  <td>999</td>
-		  <td>0</td>
-		  <td>999</td>
-		  <td>0</td>
-		  <td>1.9</td>
-		  <td>0</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>September</td>
-		  <td>10</td>
-		  <td>123</td>
-		  <td>000</td>
-		  <td>0</td>
-		  <td>789</td>
-		  <td>456</td>
-		  <td>1.9</td>
-		  <td>1.9</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>October</td>
-		  <td>10</td>
-		  <td>789</td>
-		  <td>345</td>
-		  <td>0</td>
-		  <td>234</td>
-		  <td>789</td>
-		  <td>1.9</td>
-		  <td>1.9</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>November</td>
-		  <td>10</td>
-		  <td>456</td>
-		  <td>234</td>
-		  <td>0</td>
-		  <td>234</td>
-		  <td>234</td>
-		  <td>1.9</td>
-		  <td>234</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-		<tr>
-		  <td>December</td>
-		  <td>10</td>
-		  <td>123</td>
-		  <td>789</td>
-		  <td>0</td>
-		  <td>234</td>
-		  <td>123</td>
-		  <td>1.9</td>
-		  <td>234</td>
-		  <td>456</td>
-		  <td>456</td>
-		</tr>
-	</table>
+	<div align="center"><font size=14><b>Weekly Statistics</b></font></div>
+
+	<ul class="list-group">
+		<table id="familystats">
+			<tr>
+				<th>Name</th>
+				<th>Weekly Hours</th>
+				<th>Weekly Donated Hours</th>
+				<th>Weekly Donation</th>
+				<th>Monthly Hours</th>
+				<th>Monthly Donated Hours</th>
+				<th>Monthly Donation</th>
+				<th>Yearly Hours</th>
+				<th>Yearly Donated Hours</th>
+				<th>Yearly Donation</th>
+			</tr>
+	</ul>
 
 	</div>
-
+<script>
+	function e(s) {
+		return s == null ? 0 : parseFloat(s);
+	}
+	
+	$( document ).ready(function(){
+			$.get("/getWeeklyFamilyStats", (data) => {
+				let weekStats = JSON.parse(data);
+				$.get("/getMonthlyFamilyStats", (data) => {
+					let monthStats = JSON.parse(data);
+					$.get("/getYearlyFamilyStats", (data) => {
+						let yearStats = JSON.parse(data);
+						$.get("/getDonatedWeeklystats", (data) => {
+							let donatedweekly = JSON.parse(data);
+							$.get("/getReceivedWeeklystats", (data) => {
+								let receivedweekly = JSON.parse(data);
+								$.get("/getReceivedWeeklystats", (data) => {
+									let donatedmonthly = JSON.parse(data);
+									$.get("/getReceivedWeeklystats", (data) => {
+										let receivedmonthly = JSON.parse(data);
+										$.get("/getReceivedWeeklystats", (data) => {
+											let donatedyearly = JSON.parse(data);
+											$.get("/getReceivedWeeklystats", (data) => {
+												let receivedyearly = JSON.parse(data);
+												let totals = {
+													weekTotal: 0,
+													weekdonated: 0,
+													weekreceived: 0,
+													monthTotal: 0,
+													monthdonated: 0,
+													monthreceived: 0,
+													yearTotal: 0,
+													yeardonated: 0,
+													yearreceived: 0,
+												};
+							for (let i in weekStats) {
+								totals['weekTotal']+=e(weekStats[i].totalHours);
+								totals['weekdonated']+=e(donatedweekly[i][0].donatedsum);
+								totals['weekreceived']+=e(receivedweekly[i][0].receivedsum);
+								totals['monthTotal']+=e(monthStats[i].totalHours);
+								totals['monthdonated']+=e(donatedmonthly[i][0].donatedsum);
+								totals['monthreceived']+=e(receivedmonthly[i][0].receivedsum);
+								totals['yearTotal']+=e(yearStats[i].totalHours);
+								totals['yeardonated']+=e(donatedyearly[i][0].donatedsum);
+								totals['yearreceived']+=e(receivedyearly[i][0].receivedsum);
+								
+								$("#familystats").append(`<tr>
+									<td>${weekStats[i].name}</td>
+									<td>${e(weekStats[i].totalHours).toFixed(2)}</td>
+									<td>${e(donatedweekly[i][0].donatedsum).toFixed(2)}</td>
+									<td>${e(receivedweekly[i][0].receivedsum).toFixed(2)}</td>
+									<td>${e(monthStats[i].totalHours).toFixed(2)}</td>
+									<td>${e(donatedmonthly[i][0].donatedsum).toFixed(2)}</td>
+									<td>${e(receivedmonthly[i][0].receivedsum).toFixed(2)}</td>
+									<td>${e(yearStats[i].totalHours).toFixed(2)}</td>
+									<td>${e(donatedyearly[i][0].donatedsum).toFixed(2)}</td>
+									<td>${e(receivedyearly[i][0].receivedsum).toFixed(2)}</td>
+									</tr>`);
+								}
+								$("#familystats").append(`<tr>
+									<td><b>TOTAL</b></td>
+									<td>${totals['weekTotal'].toFixed(2)}</td>
+									<td>${totals['weekdonated'].toFixed(2)}</td>
+									<td>${totals['weekreceived'].toFixed(2)}</td>
+									<td>${totals['monthTotal'].toFixed(2)}</td>
+									<td>${totals['monthdonated'].toFixed(2)}</td>
+									<td>${totals['monthreceived'].toFixed(2)}</td>
+									<td>${totals['yearTotal'].toFixed(2)}</td>
+									<td>${totals['yeardonated'].toFixed(2)}</td>
+									<td>${totals['yearreceived'].toFixed(2)}</td>
+									</tr>`)
+							});
+						});
+						});
+						});
+						});
+						});
+				});
+			});
+		});
+	});
+	</script>
 </body>
 
 </html>
