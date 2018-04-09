@@ -419,7 +419,7 @@ const userEndpoints = {
 		return 1;
 	},
 
-  "/getfacilitators": (req, res, role) => {
+  "/getfacilitators": (req, res, role, user) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -430,13 +430,19 @@ const userEndpoints = {
 
     req.on("end", () => {
       let data = qs.parse(body);
-
-      getFacilitatorNames(data.familyid, (err, names) => {
+        getFamilyId(user.userid, (err, userFamilyId) => {
+          if (err) {
+            console.log(err.stack);
+            return;
+          } else {
+            getFacilitatorNames(userFamilyId, (err, names) => {
         if (!err) {
           res.end(JSON.stringify(names));
         }
       });
-    });
+    }
+  });
+  });
     return 1;
   },
 
@@ -1047,7 +1053,7 @@ const adminEndpoints = {
               if(message){
                 res.end(message);
               } else{
-              res.end({status: 0});
+              res.end(JSON.stringify({status: 0}));
               }
               }
             });
@@ -1838,6 +1844,8 @@ function getFamilyYearlyTimes(famid, callback) {
 
 
 function getFacilitatorNames(familyid, callback) {
+  console.log("CHECKING FAMILYID");
+  console.log(familyid);
   db.query(`SELECT firstname, lastname, f2.userid
     FROM familymembers as f1, users as f2
     WHERE f1.userid = f2.userid
