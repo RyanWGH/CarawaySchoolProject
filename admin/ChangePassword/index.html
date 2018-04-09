@@ -37,7 +37,7 @@
   </nav>
 
 <main role="main" class="container">
-<form action=/changepass method="post" id="ChangePasswordForm">
+<form id="ChangePasswordForm">
   <p></p>
   <label for="LastName">Current password: </label>
   <input type="password" class="form-control" id="CurrentPassword" name="CurrentPassword" form="ChangePasswordForm" style="width: 275px;">
@@ -48,6 +48,24 @@
 		<label for="Phone">Repeat Password: </label>
 		<input type="password" class="form-control" id="RepeatPassword" name="RepeatPassword" form="ChangePasswordForm" style="width: 275px;">
 		  <p></p>
-		  <button type="submit" form="ChangePasswordForm" formaction="/UpdatePassword" method="post" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
+		  <button id="submit" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
 	  	  </div>
 </main>
+<script>
+$(document).ready(function() {
+  $("#submit").click(() => {
+    $.post("/UpdatePassword", {
+      CurrentPassword: $("#CurrentPassword").val(),
+      NewPassword: $("#NewPassword").val(),
+      RepeatPassword: $("#RepeatPassword").val()
+    }, (data) => {
+      if (data.status) {
+        alert(data.status);
+      } else {
+        alert("Password successfully changed");
+        window.location.assign("/ChangePassword");
+      }
+    });
+  });
+});
+</script>
