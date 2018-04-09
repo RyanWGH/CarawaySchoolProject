@@ -33,7 +33,7 @@
     </div>
   </nav>
 
-<form action=/EditFamily method="post" id="EditFamilyform">
+<form id="EditFamilyform">
 	<div align="center">
       <label for="Family">Family:</label>
       <select class="form-control" id="Family" name="Family" form="EditFamilyform" style="width: 275px;">
@@ -42,12 +42,21 @@
   		  <label for="FamilyName">Family Name: </label>
 		  <input type="text" class="form-control" id="FamilyName" name="FamilyName" form="EditFamilyform" style="width: 275px;">
 			<p></p>
-			<button type="submit" formaction="/Familyedit" form="EditFamilyform" class="btn btn-primary btn-lg" method="post" style="width: 275px; height: 50px;">Submit</button>
+			<button id="submit" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 				  </div>
 		</form>
 </main>
 <script>
 	$( document ).ready(function(){
+    $("#submit").click(function() {
+      $.post("/Familyedit", {Family: $("#Family").val(), FamilyName: $("#FamilyName").val()}, (data) => {
+        if (!data.status) {
+          alert("Family named successfully changed");
+          window.location.assign("/EditFamily");
+        }
+      });
+    });
+
 		$.get("/getNewfamilies", (data) => {
 			let names = JSON.parse(data);
 			$("#Family").empty();
