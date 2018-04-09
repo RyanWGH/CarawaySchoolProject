@@ -36,6 +36,7 @@ const FIELD_TRIP = role => `/${role}/FieldTrip`;
 const ADD_FIELD_TRIP = role => `/${role}/AddFieldTrip`;
 
 
+
 const generalEndpoints = {
   "/": (req, res, role) => {
     if (role) {
@@ -133,6 +134,12 @@ const generalEndpoints = {
     });
 
     return 1;
+  },
+
+  "/familytest": (req, res) => {
+    console.log('familytest');
+    getFamilyNames(() => {});
+    return 1;
   }
 };
 
@@ -171,17 +178,23 @@ const userEndpoints = {
     return 1;
   },
 
+  "/contact": (req, res, role) => {
+    serveFile(req, res, CONTACT_PAGE(role));
+    return 1;
+  },
+    "/CreateFacilitator": (req, res, role) => {
+    serveFile(req, res, CREATE_FACILITATOR(role));
+    return 1;
+  },
   "/AccountSettings": (req, res, role) => {
     serveFile(req, res, ACCOUNT_SETTINGS(role));
     return 1;
   },
-
-  "/ChangePassword": (req, res, role) => {
+    "/ChangePassword": (req, res, role) => {
     serveFile(req, res, CHANGE_PASSWORD(role));
     return 1;
   },
-
-  "/CreateFacilitator": (req, res, role) => {
+    "/CreateFacilitator": (req, res, role) => {
     serveFile(req, res, CREATE_FACILITATOR(role));
     return 1;
   },
@@ -258,7 +271,7 @@ const userEndpoints = {
     return 1;
   },
 
-  "/Addfacilitation": (req, res, role) => {
+    "/Addfacilitation": (req, res, role) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -323,6 +336,7 @@ const userEndpoints = {
     return 1;
   },
 
+
   "/addNewFacilitator": (req, res, role, user) => {
    	let body = '';
       req.on("data", (data) => {
@@ -331,7 +345,7 @@ const userEndpoints = {
          	req.connection.destroy();
 			}
       });
-
+      
       req.on("end", () => {
       	let data = qs.parse(body);
       	console.log(user);
@@ -401,9 +415,8 @@ const userEndpoints = {
 		return 1;
 	},
 
-  "/getfacilitations": (req, res, role) => {
+  "/getfacilitators": (req, res, role) => {
     let body = '';
-
     req.on("data", (data) => {
       body += data;
       if (body.length > 1e6) {
@@ -414,27 +427,34 @@ const userEndpoints = {
     req.on("end", () => {
       let data = qs.parse(body);
 
-      getAllFacilitations(data.day, data.month, data.year, (err, facilitations) => {
+      getFacilitatorNames(data.familyid, (err, names) => {
         if (!err) {
-          res.end(JSON.stringify(facilitations));
+          res.end(JSON.stringify(names));
         }
       });
     });
     return 1;
   },
 
-  "/getfacilitators": (req, res, role, user) => {
-    getFamilyId(user.userid, (err, familyid) => {
+	
+	"/getfamilies": (req, res, role) => {
+    getFamilyNames((err, names) => {
       if (!err) {
-        getFacilitatorNames(familyid, (err, names) => {
-          if (!err) {
-            res.end(JSON.stringify(names));
-          }
-        });
+        res.end(JSON.stringify(names));
       }
     });
     return 1;
   },
+  
+  "/getRoomId": (req, res, role) => {
+  getRoomId((err, colours) => {
+  	if (!err) {
+  		res.end(JSON.stringify(colours));
+  	}
+  });
+  return 1;
+  },
+
 
   "/getNewfamilies": (req, res, role) => {
     getNewFamilyNames((err, names) => {
@@ -442,6 +462,106 @@ const userEndpoints = {
         res.end(JSON.stringify(names));
       }
     });
+    return 1;
+  },
+
+
+  "/getWeeklyTotalStats": (req, res, role, user) => {
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+    getFamilyId(user.userid, (err, userFamilyId) => {
+        if (!err) {
+            getFamilyWeeklyTimes(userFamilyId, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                console.log("THIS IS THE SUM THAT WE ARE LOOKING AT");
+                console.log(sum);
+                res.end(JSON.stringify(sum));
+              }
+            });
+          }
+      });
+    });    
+    return 1;
+  },
+
+    "/getMonthlyTotalStats": (req, res, role, user) => {
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+    getFamilyId(user.userid, (err, userFamilyId) => {
+        if (!err) {
+            getFamilyMonthlyTimes(userFamilyId, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                console.log("THIS IS THE SUM THAT WE ARE LOOKING AT");
+                console.log(sum);
+                res.end(JSON.stringify(sum));
+              }
+            });
+          }
+      });
+    });    
+    return 1;
+  },
+
+    "/getYearlyTotalStats": (req, res, role, user) => {
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+    getFamilyId(user.userid, (err, userFamilyId) => {
+        if (!err) {
+            getFamilyYearlyTimes(userFamilyId, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                console.log("THIS IS THE SUM THAT WE ARE LOOKING AT");
+                console.log(sum);
+                res.end(JSON.stringify(sum));
+              }
+            });
+          }
+      });
+    });    
     return 1;
   },
 
@@ -473,7 +593,7 @@ const userEndpoints = {
     return 1;
   },
 
-  "/getReceivedWeeklystats": (req, res, role, user) => {
+    "/getReceivedWeeklystats": (req, res, role, user) => {
     let body = '';
     req.on("data", (data) => {
       body += data;
@@ -500,6 +620,28 @@ const userEndpoints = {
     return 1;
   },
 
+   "/getfacilitations": (req, res, role) => {
+     let body = '';
+
+     req.on("data", (data) => {
+       body += data;
+       if (body.length > 1e6) {
+         req.connection.destroy();
+       }
+     });
+
+     req.on("end", () => {
+       let data = qs.parse(body);
+
+       getAllFacilitations(data.day, data.month, data.year, (err, facilitations) => {
+         if (!err) {
+           res.end(JSON.stringify(facilitations));
+         }
+       });
+     });
+     return 1;
+   },
+   
   "/getDonatedMonthlystats": (req, res, role, user) => {
     let body = '';
     req.on("data", (data) => {
@@ -622,11 +764,11 @@ const teacherEndpoints = {
     serveFile(req, res, DAY_PAGE(role));
     return 1;
   },
-  "/AccountSettings": (req, res, role) => {
+    "/AccountSettings": (req, res, role) => {
     serveFile(req, res, ACCOUNT_SETTINGS(role));
     return 1;
   },
-  "/ChangePassword": (req, res, role) => {
+    "/ChangePassword": (req, res, role) => {
     serveFile(req, res, CHANGE_PASSWORD(role));
     return 1;
   },
@@ -639,6 +781,7 @@ const teacherEndpoints = {
         req.connection.destroy();
       }
     });
+
 
     req.on("end", () => {
       let data = qs.parse(body);
@@ -702,7 +845,7 @@ const teacherEndpoints = {
     return 1;
   },
 
-  "/getfacilitations": (req, res, role) => {
+   "/getfacilitations": (req, res, role) => {
      let body = '';
 
      req.on("data", (data) => {
@@ -846,7 +989,6 @@ const adminEndpoints = {
     serveFile(req, res, ACCEPT_FACILITATOR(role));
     return 1;
   },
-
   "/CreateFacilitator": (req, res, role) => {
     serveFile(req, res, CREATE_FACILITATOR(role));
     return 1;
@@ -1219,6 +1361,13 @@ const adminEndpoints = {
     return 1;
   },
 
+<<<<<<< HEAD
+
+  "/getfamilies": (req, res, role) => {
+    getFamilyNames((err, names) => {
+      if (!err) {
+        res.end(JSON.stringify(names));
+=======
   "/getDonatedYearlystats": (req, res, role) => {
     var donated = {};
     var i;
@@ -1228,6 +1377,7 @@ const adminEndpoints = {
       body += data;
       if (body.length > 1e6) {
         req.connection.destroy();
+>>>>>>> upstream/master
       }
     });
     req.on("end", () => {
@@ -1334,7 +1484,18 @@ const adminEndpoints = {
     });
     return 1;
   },
-
+  
+  "/getPendingFacilitatorList": (req, res, role) => {
+    getNewFacilitators((err, pendingfacilitators) => {
+      if(!err) {
+        res.end(JSON.stringify(pendingfacilitators));
+      }
+    });
+    return 1;
+  },
+  
+  
+  
   "/Addfacilitation": (req, res, role) => {
     let body = '';
     req.on("data", (data) => {
@@ -1350,7 +1511,7 @@ const adminEndpoints = {
       insertFacilitation(data.Facilitator, data.roomid, data.StartTime,
           data.EndTime, data.day, data.month, data.year, (err) => {
             if (!err) {
-              res.end(JSON.stringify({status: 0}));
+              res.end("Facilitation successfully added");
             }
           });
     });
@@ -1372,7 +1533,7 @@ const adminEndpoints = {
       deleteFacilitation(data.Facilitator, data.roomid, data.StartTime,
         data.EndTime, data.day, data.month, data.year, (err) => {
           if (!err) {
-            res.end(JSON.stringify({status: 0}));
+            res.end("Facilitation successfully deleted");
           }
         });
     });
@@ -1438,6 +1599,48 @@ const adminEndpoints = {
     });
     return 1;
   },
+  
+  "/ApproveFacilitator": (req, res, role) => {
+  	let body = '';
+  	req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+   req.on("end", () => {
+      let data = qs.parse(body);
+      
+      approveFacilitator(data.pfId, (err) => {
+      	if(!err) {
+        		getPendingFacilitator(data.pfId, (err, info) => {
+        			if (!err) {
+        				console.log(info);
+        				addNewUser(info.firstname, info.lastname, info.phone, info.email, info.pword, (err) => {
+        					if (!err) {
+        						getUserId(info.firstName, info.lastName, (err, userId) => {
+  									if (err) {
+  										console.log(err.stack);
+      								return;
+  									}
+  									else{
+  										addNewFacilitator_admin(userId, info.familyunitid, (err) => {
+  											if (!err){
+  												res.end("New User Successfully Added");
+  											}
+        								});
+									}
+      						});
+      					}
+        				});
+					}
+				});
+			}
+		});
+	});
+   return 1;
+  },
 
   "/ApproveAbsence": (req, res, role) => {
   	let body = '';
@@ -1459,6 +1662,26 @@ const adminEndpoints = {
     });
     return 1;
   },
+  
+  "/DenyAbsence": (req, res, role) => {
+    let body = '';
+    req.on("data", (data) => {
+  	   body += data;
+       if (body.length > 1e6) {
+         req.connection.destroy();
+       }
+     });
+
+  	req.on("end", () => {
+  		let data = qs.parse(body);
+      denyFacilitator(data.pfId, (err) => {
+        if(!err) {
+          res.end("Facilitator denied");
+        }
+  	   });
+     });
+     return 1;
+   },
 
   "/DenyAbsence": (req, res, role) => {
     let body = '';
@@ -1480,7 +1703,7 @@ const adminEndpoints = {
      return 1;
    },
 
-  "/getfacilitations": (req, res, role) => {
+   "/getfacilitations": (req, res, role) => {
      let body = '';
 
      req.on("data", (data) => {
@@ -1501,7 +1724,49 @@ const adminEndpoints = {
      });
      return 1;
    },
+   
+   "/addNewFacilitator": (req, res, role) => {
+   	let sessionID = cookie.parse(req.headers.cookie || "").sessionid;
 
+<<<<<<< HEAD
+   	lookupSession(req, res, sessionID, (validSession) => {
+   	if (!validSession) {
+   		console.log("invalid session trying to sign up");
+      	return;
+   	}
+
+   	let body = '';
+      req.on("data", (data) => {
+      	body += data;
+      	if (body.length > 1e6) {
+         	req.connection.destroy();
+			}
+      });
+      
+      req.on("end", () => {
+      	let data = qs.parse(body);
+      	addNewUser(data.FirstName, data.LastName, data.Phone, data.Email, data.Password, (err) => {
+        		if (err){
+        			console.log(err.stack);
+      			return;
+      		}
+      	});
+        	getUserId(data.FirstName, data.LastName, (err, userId) => {
+  				if (err) {
+  					console.log(err.stack);
+      			return;
+  				}
+  				else{
+  					addNewFacilitator_admin(userId, data.Family, (err) => {
+  						if (!err){
+  							res.end("New User Successfully Added");
+  						}
+        			});
+				}
+      	});
+		})
+		});
+=======
   "/addNewFacilitator": (req, res, role) => {
    	let body = '';
     req.on("data", (data) => {
@@ -1532,12 +1797,18 @@ const adminEndpoints = {
         });
       });
   	});
+>>>>>>> upstream/master
 		return 1;
   }
 };
 
 function getFamilyNames(callback) {
-  db.query(`SELECT familyname, familyunitid FROM familyunits`, (err, res) => {
+  db.query(`SELECT firstname, lastname, familyunitid
+    from familymembers as f1, users as f2
+    where f1.userid = f2.userid and f1.userid in
+    (select distinct userid from familymembers
+    where familyunitid = f1.familyunitid
+    limit 1) order by lastname`, (err, res) => {
       if (err) {
         console.log(err.stack);
         callback(true);
@@ -1657,7 +1928,19 @@ function insertFacilitation(userid, roomid, start, end, day, month, year, callba
 
 function deleteFacilitation(userid, roomid, start, end, day, month, year, callback) {
   db.query(`UPDATE facilitations SET timeStart = '${start}', timeEnd = '${end}'
-    WHERE userid = ${userid} AND roomid = ${roomid} AND day = ${day} AND month = ${month} AND year = ${year} AND timestart != '' AND timeend != ''`,
+    WHERE userid = ${userid} AND roomid = ${roomid} AND day = ${day} AND month = ${month} AND year = ${year}`,
+    (err) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null);
+      }
+    });
+}
+
+function deletePendingFacilitator(table, id, callback) {
+	db.query(DELETE FROM table WHERE id=${id}`,
     (err) => {
       if (err) {
         console.log(err.stack);
@@ -1681,6 +1964,10 @@ function createFamily(AddfamilyName, callback){
 }
 
 function updatePassword(userId, CurrentPassword, NewPassword, RepeatPassword, callback){
+  console.log(userId);
+  console.log(CurrentPassword);
+  console.log(NewPassword);
+  console.log(RepeatPassword);
   if (NewPassword == RepeatPassword){
   db.query(`UPDATE users SET pword = '${NewPassword}' WHERE userid = ${userId} AND pword='${CurrentPassword}'`,
     (err) => {
@@ -1696,11 +1983,13 @@ function updatePassword(userId, CurrentPassword, NewPassword, RepeatPassword, ca
   }
 }
 
-
 function editFamily(newfamilyname, familyunitid, callback){
   db.query(`UPDATE familyUnits SET familyName = '${newfamilyname}' WHERE familyUnitID = ${familyunitid}`,
     (err) => {
       if(err) {
+        console.log("error in editFamily");
+        console.log(newfamilyname);
+        console.log(familyunitid);
         console.log(err.stack);
         callback(true);
       } else {
@@ -1713,6 +2002,11 @@ function addChild(first, last, family, room, callback){
   db.query(`INSERT INTO Children (familyunitid, firstname, lastname, roomid) VALUES (${family}, '${first}', '${last}', ${room})`,
     (err) => {
       if(err) {
+        console.log(first);
+        console.log(last);
+        console.log(family);
+        console.log(room);
+
         console.log(err.stack);
         callback(true);
       } else {
@@ -1786,6 +2080,8 @@ function getDonatedHoursMonthly(familyunitid, callback){
     });
 }
 
+<<<<<<< HEAD
+=======
 function getReceivedHoursMonthly(familyunitid, callback){
   var curr = new Date;
   var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
@@ -1832,6 +2128,7 @@ function getReceivedHoursYearly(familyunitid, callback){
       }
     });
 }
+>>>>>>> upstream/master
 function getAbsences(callback){
   db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
     (err, result) => {
@@ -1844,8 +2141,25 @@ function getAbsences(callback){
     });
 }
 
+<<<<<<< HEAD
+function getNewFacilitators(callback){
+  db.query(`SELECT pfid, firstname, lastname, phone, email, familyunits.familyunitid from pendingfacilitators, familyunits WHERE familyunits.familyunitid = pendingfacilitators.familyunitid AND status = 1`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
+
+function getFamStats(callback){
+    db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
+=======
 function getFamStats(famID, callback){
     db.query(`SELECT timestart, timeend, day, month, year FROM facilitations, familymembers WHERE facilitations.userid = familymembers.userid AND familymembers.familyunitid = ${famID}`,
+>>>>>>> upstream/master
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1888,6 +2202,17 @@ function editAccountSettings( userId, LastName, FirstName, Phone, callback){
     });
 }
 
+function approveFacilitator(pfId, callback) {
+	db.query(`UPDATE pendingfacilitators SET status = 2 WHERE pfId = ${pfId}`, (err) => {
+		if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else {
+      callback(null);
+		}
+	});
+}
+
 function approveAbsence(absenceId, callback) {
 	db.query(`UPDATE absences set status = 2 WHERE absenceId = ${absenceId}`, (err) => {
     if (err) {
@@ -1897,6 +2222,17 @@ function approveAbsence(absenceId, callback) {
       callback(null);
     }
   });
+}
+
+function denyFacilitator(pfId, callback) {
+	db.query(`UPDATE pendingfacilitators SET status = 0 WHERE pfId = ${pfId}`, (err) => {
+		if (err) {
+      console.log(err.stack);
+      callback(true);
+    } else {
+      callback(null);
+		}
+	});
 }
 
 function denyAbsence(absenceId, callback) {
@@ -1922,6 +2258,31 @@ function getFamilyId (userId, callback){
    });
 }
 
+<<<<<<< HEAD
+//Function used to get the userId of any user using its email
+function getUserId(firstName, lastName, callback) {
+
+	db.query(`SELECT userid FROM users WHERE (firstname = '${firstName}' AND lastname = '${lastName}')`, (err, res) => {
+	if (err) {
+      console.log(err.stack);
+      callback(true);
+   }	else {
+      callback(null, res.rows[0].userid);
+		}
+   });
+}
+
+function getPendingFacilitator(pfid, callback) {
+	db.query(`SELECT firstname, lastname, phone, email, pword, familyunitid FROM pendingfacilitators WHERE (pfid = ${pfid})`, (err, res) => {
+	if (err) {
+      console.log(err.stack);
+      callback(true);
+   }	else {
+      callback(null, res.rows[0]);
+		}
+   });
+}
+=======
 function getAllFamilyIds (callback){
   db.query(`select DISTINCT familyunits.familyunitid, familyname from familymembers, familyunits WHERE familyunits.familyunitid = familymembers.familyunitid`, (err, res) => {
    if (err) {
@@ -1933,6 +2294,7 @@ function getAllFamilyIds (callback){
    });
 }
 
+>>>>>>> upstream/master
 //Updating the weekly hours for the donating family and the recieving family
 function donateHours(donatingFamilyId, Time, targetFamilyId, day, month, year, callback) {
 	console.log("Donating Hours");
@@ -1950,7 +2312,7 @@ function donateHours(donatingFamilyId, Time, targetFamilyId, day, month, year, c
 //Function used by admin to create a new user
 function addNewUser(firstName, lastName, phone, email, password, callback) {
 	db.query(`INSERT INTO users (firstname, lastname, phone, email, pword) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}')`,
-	(err) =>
+	(err) => 
 	{
       if(err) {
         console.log(err.stack);
@@ -1959,20 +2321,6 @@ function addNewUser(firstName, lastName, phone, email, password, callback) {
         callback(null);
       }
     });
-}
-
-//Function used to get the userId of any user using its email
-function getUserId(firstName, lastName, callback) {
-
-	db.query(`SELECT userid FROM users WHERE (firstname = '${firstName}' AND lastname = '${lastName}')`, (err, res) => {
-	if (err) {
-      console.log(err.stack);
-      callback(true);
-   }	else {
-   	//console.log(res.rows[0].userid)
-      callback(null, res.rows[0].userid);
-		}
-   });
 }
 
 //Function used to add new facilitator
@@ -1989,8 +2337,12 @@ function addNewFacilitator_admin (userId, familyUnitId, callback) {
 }
 
 //Function used by the user to add a new facilitator
-function addNewFacilitator_user (firstName, lastName, phone, email, password, familyUnitId, callback) {
-	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, familyUnitId) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', ${familyUnitId})`,
+//Status:
+//1 = Pending
+//2 = Denied
+//0 = Accepted
+function addNewFacilitator_user(firstName, lastName, phone, email, password, familyUnitId, callback) {
+	db.query(`INSERT INTO pendingfacilitators (firstname, lastname, phone, email, pword, status, familyUnitId) VALUES('${firstName}', '${lastName}', '${phone}', '${email}', '${password}', 1, ${familyUnitId})`,
 	(err) => {
       if(err) {
       	console.log("1 if");
@@ -2004,7 +2356,7 @@ function addNewFacilitator_user (firstName, lastName, phone, email, password, fa
 }
 
 function getAllFacilitations(day, month, year, callback) {
-  db.query(`SELECT firstname, lastname, roomid, users.userid, timestart, timeend FROM facilitations, users WHERE users.userid = facilitations.userid AND day = ${day} AND month = ${month} AND year = ${year} AND timestart != '' AND timeend != ''`, (err, res) => {
+  db.query(`SELECT firstname, lastname, roomid, users.userid, timestart, timeend FROM facilitations, users WHERE users.userid = facilitations.userid AND day = ${day} AND month = ${month} AND year = ${year} AND NOT timestart = '' AND NOT timeend = ''`, (err, res) => {
     if (err) {
       console.log(err.stack);
       callback(true);
@@ -2138,11 +2490,22 @@ function lookupSession(req, res, id, callback) {
   });
 }
 
+function getRoomId(callback) {
+  db.query(`SELECT roomid, colour FROM rooms`, (err, res) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
 function handleEndpoint(req, res, endpoint, role, user) {
   let status = 0;
 
   if (endpoint in generalEndpoints) {
-    status = generalEndpoints[endpoint](req, res, role, user);
+    status = generalEndpoints[endpoint](req, res, role);
     if (status) {
       return;
     }
@@ -2171,7 +2534,7 @@ function handleEndpoint(req, res, endpoint, role, user) {
       break;
     default:
       if (endpoint in generalEndpoints) {
-        status = generalEndpoints[endpoint](req, res, role, user);
+        status = generalEndpoints[endpoint](req, res, role);
       }
       break;
   }
