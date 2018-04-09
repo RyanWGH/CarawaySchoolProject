@@ -37,14 +37,26 @@
   </nav>
 
 <div align="center">
-<form action=/AddFamily method="post" id="AddFamilyForm">
+<form id="AddFamilyForm">
 	<h2>Create a new family</h2>
 	  	<label for="FirstName">Family Name: </label>
 		  <input type="text" class="form-control" id="FamilyName" name="FamilyName" form="AddFamilyForm" style="width: 275px;">
 		  <p></p>
-	      <button type="submit" formaction="/Createfamily" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
+	      <button id="submit" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 	  </form>
 	  </div>
 </main>
+<script>
+$( document ).ready(function(){
+  $("#submit").click(function() {
+    $.post("/Createfamily", {FamilyName: $("#FamilyName").val()}, (data) => {
+      if (!data.status) {
+        alert(`Family "${$("#FamilyName").val()}" successfully created`);
+        window.location.assign("/CreateFamily");
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>
