@@ -5,6 +5,60 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <style>
+	  * { 
+	  	margin: 0; 
+	  	padding: 0; 
+	  }
+	  body { 
+	  	font: 14px/1.4 sans-serif; 
+	  }
+	  #page-wrap {
+	  	margin: 50px;
+	  }
+	  p {
+	  	margin: 20px 0; 
+	  }
+
+	  	/* 
+	  	Generic Styling, for Desktops/Laptops 
+	  	*/
+	  	table.table1 { 
+	  		width: 100%; 
+	  		border-collapse: collapse; 
+	  	}
+		table.table2 {
+	  		width: 30%; 
+	  		border-collapse: collapse; 
+		}
+	  	/* Zebra striping */
+	  	tr:nth-of-type(odd) { 
+	  		background: #f4f4f4; 
+	  	}
+	  	th { 
+	  		background: #337ab7; 
+	  		color: white; 
+	  		font-weight: bold; 
+	  	}
+	  	td, th { 
+	  		padding: 6px; 
+	  		border: 1px solid #c9d9e8; 
+	  		text-align: left; 
+	  	}
+		.column1 {
+		    float: left;
+			width: 25%;	
+		}
+		.column2 {
+		    float: left;
+			width: 50%;	
+		}
+		.column3 {
+		    float: right;
+		    width: 25%;
+			
+		}
+	  </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
@@ -28,22 +82,143 @@
 	</u1>
   </div>
 </nav>
-
-<div class="container" align="center">
-	<img class="mb-4" src="/assets/CarawayLogo.png" alt="" align="middle" width="156" height="156">
-  <h2>Welcome to Caraway</h2>
-  
-  <h2>Weekly Statistics</h2>
-  
-  <p><font size="4">Hours Completed: 3.0</font></p>
-  <p><font size="4">Hours Required: 5.0</font></p>
-  <p><font size="4">Overflow Hours: 0.0</font></p>
-
-  <h2>Monthly Statistics</h2>
-  <p><font size="4">Hours Completed: 12.0</font></p>
-  <p><font size="4">Hours Required: 10.0</font></p>
-  <p><font size="4">Overflow Hours: 2.0</font></p>
+<div class="column3">
+      <table id="UsersChildren" class="table1">
+		  <h2>Your Children</h2>
+      	<tr>
+      		<th>First Name</th>
+      		<th>Last Name</th>
+      		<th>Room</th>
+      	</tr>
+    </table>
+	<br>
+	<br>
+    <table id="UpcomingFacilitations" class="table1">
+			<h2>Upcoming Facilitations</h2>
+			<tr>
+    		<th>Room</th>
+    		<th>Start Time</th>
+    		<th>End Time</th>
+    		<th>Date</th>
+    	</tr>
+  </table>
 </div>
+			<div class="column1" align="center">
+	<img class="mb-4" align="center" src="/assets/CarawayLogo.png" alt="" align="middle" width="156" height="156">
+  <h2>Welcome to Caraway</h2>
+  <span style="font-size: large;">Caraway K-9 is an alternative project-based program designed to promote 21st century learning skills including thinking and problem solving, collaboration and adaptability, effective oral and written communication, analyzing and accessing information, imagination, and initiative.
+<br><br>
+The program strives to encourage students to become creative, curious, confident, and self-directed learners. Our unique environment brings the child, family, and teaching staff together to provide a safe, challenging, and joyful multi-age learning environment.</span>
+</div>
+  <div class="column2" align="center">
+  <h2>This Week's Stats</h2>
+  <table id="WeeklyStatistics" class="table2">
+  </table>
 
+  <h2>This Month's Stats</h2>
+  <table id="MonthlyStatistics" class="table2">
+  </table>
+  
+  <h2>This Year's Stats</h2>
+  <table id="YearlyStatistics" class="table2">
+  </table>
+</div>
+  <script>
+	  console.log("SOMETHING ELSE");
+	  function roomidToName(roomid){
+		  switch(roomid) {
+		  case 1:
+			  return "Blue";
+		  case 2:
+			  return "Purple";
+		  case 3:
+			  return "Green";
+		  case 4:
+			  return "Red";
+		  case 5:
+			  return "Grey";
+		  default: 
+			  return "???";
+		  }
+	  }
+	  
+	  
+	  function ConvertValuesToDate(day, month, year){
+		  let date = new Date(`${year}-${month}-${day}`);
+		  return date.toDateString();
+	  }
+	$(document).ready(function() {
+		console.log("ANYTHING");
+		let date=new Date();
+		$.post('/getUpcomingfacilitations', {
+			day: date.getUTCDate(),
+			month: date.getUTCMonth()+1,
+			year: date.getUTCFullYear()
+		}, (data) => {
+			let facilitations = JSON.parse(data);
+			for (let i of facilitations) {
+				$("#UpcomingFacilitations").append(`<tr>
+					<td>${roomidToName(i.roomid)}</td>
+					<td>${i.timestart}</td>
+					<td>${i.timeend}</td>
+					<td>${ConvertValuesToDate(i.day, i.month, i.year)}</td>
+					</tr>`);
+			}
+		});
+		
+		$.post('/getChildren', (data) => {
+			let children = JSON.parse(data);
+			for (let i of children) {
+				$("#UsersChildren").append(`<tr>
+					<td>${i.firstname}</td>
+					<td>${i.lastname}</td>
+					<td>${roomidToName(i.roomid)}</td>
+					</tr>`);
+			}
+		});
+		
+		$.post('/getDonatedWeeklystats', (data) => {
+			let stats = JSON.parse(data);
+			console.log(data);
+			console.log(stats);
+				$("#WeeklyStatistics").append(`
+	  			  <col width="130">
+	  			  <tr>
+		  		  		<th>Hours Donated</th>
+		  		  		<td>${stats[0].donatedsum}</td>
+	  			  </tr>`);
+			});
+			$.post('/getReceivedWeeklystats', (data) => {
+				let stats = JSON.parse(data);
+					$("#WeeklyStatistics").append(`
+		  			  <tr>
+			  		  		<th>Hours Received</th>
+			  		  		<td>${stats[0].receivedsum}</td>
+		 			   </tr>`);
+			});
+				
+			$.post('/getDonatedMonthlystats', (data) => {
+				let stats = JSON.parse(data);
+				console.log(data);
+				console.log(stats);
+					$("#MonthlyStatistics").append(`
+		  			  <col width="130">
+		  			  <tr>
+			  		  		<th>Hours Donated</th>
+			  		  		<td>${stats[0].donatedsum}</td>
+		  			  </tr>`);
+				});
+				$.post('/getReceivedMonthlystats', (data) => {
+					let stats = JSON.parse(data);
+						$("#MonthlyStatistics").append(`
+			  			  <tr>
+				  		  		<th>Hours Received</th>
+				  		  		<td>${stats[0].receivedsum}</td>
+			 			   </tr>`);
+				});
+				
+				
+		});
+	</script>
 </body>
 </html>
