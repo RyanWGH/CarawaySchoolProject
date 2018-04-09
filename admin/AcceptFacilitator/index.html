@@ -34,6 +34,7 @@
   		<li><a href="/logout">Logout</a></li>
   	</u1>
     </div>
+
   </nav>
 
 
@@ -43,8 +44,9 @@
 	<div align="center"><font size=14><b>New Facilitators</b></font></div>
 
 	<ul class="list-group">
-		<table id="AbsenceList">
+		<table id="NewFacilitatorList">
 			<tr>
+        <th>PF ID</th>
 				<th>First Name</th>
 				<th>Last Name</th>
 				<th>Phone Number</th>
@@ -57,24 +59,43 @@
 	</div>
 
 	<script>
+  
+  function approveFacilitator(id) {
+		$.post("/ApproveFacilitator", {pfId: id}, (data) => {
+			window.location.assign("/AcceptFacilitator");
+		});
+	}
+
+	function denyFacilitator(id) {
+		$.post("/DenyFacilitator", {pfId: id}, (data) => {
+			window.location.assign("/AcceptFacilitator");
+		});
+	}
+  
 		$( document ).ready(function(){
-				$.get("/getacceptfacilitatorlist", (data) => {
-					let absences = JSON.parse(data);
-					for (let i of absences) {
+				$.get("/getPendingFacilitatorList", (data) => {
+					let facilitators = JSON.parse(data);
+					for (let i of facilitators) {
 						$("#NewFacilitatorList").append(`<tr>
-							<td class="absence-${i.absenceid}">${i.absenceid}</td>
-							<td class="familyname-${i.absenceid}">${i.familyname}</td>
-							<td class="fromdate-${i.absenceid}">${(new Date(i.fromdate)).toDateString()}</td>
-							<td class="todate-${i.absenceid}">${(new Date(i.todate)).toDateString()}</td>
-							<td class="accept accept-${i.absenceid}"><button type="submit" value="Submit" class="btn btn-primary">Accept</button></td>
-							<td class="deny deny-${i.absenceid}"><button type="submit" value="Submit" class="btn btn-primary">Deny</button></td>
+							<td class="pfid">${i.pfid}</td>
+              <td class-"firstname-${i.pfid}">${i.firstname}</td>
+							<td class="lastname-${i.pfid}">${i.lastname}</td>
+							<td class="phone-${i.pfid}">${i.phone}</td>
+							<td class="email-${i.pfid}">${i.email}</td>
+							<td class="accept accept-${i.pfid}"><button type="submit" value="Submit" class="btn btn-primary approve">Accept</button></td>
+							<td class="deny deny-${i.pfid}"><button type="submit" value="Submit" class="btn btn-primary deny">Deny</button></td>
 							</tr>`);
 					}
-
-					$('.accept').click(() => {
-						$(this).parent().find('.')
-					})
 				});
+					
+          $('.approve').click(function() {
+					approveFacilitator($(this).parent().parent().find('.pfid').text());
+				});
+
+				$('.deny').click(function() {
+					denyFacilitator($(this).parent().parent().find('.pfid').text());
+				});
+        
 		});
 		</script>
 	</body>
