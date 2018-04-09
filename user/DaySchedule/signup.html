@@ -1,0 +1,62 @@
+<div class="event-info">
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+		.tab1 {position:relative;left:100px;
+			white-space:nowrap;}
+		.tab2 {position:relative;left:50px;
+				white-space:nowrap;}
+		.tab3 {position:relative;left:25px;
+				white-space:nowrap;}
+		.tab4 {position:relative;left:75px;
+				white-space:nowrap;}
+		.tab5 {position:relative;left:160px;
+				white-space:nowrap;}
+  </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<form class="form-inline" align="left">
+  <h2>Time Slot: Select Time</h2>
+  <form>
+    <div class="form-group" align="left">
+      <span class="tab3">
+        <label for="Facilitator">Facilitator:</label>
+      </span><br>
+      <span class="tab3">
+        <select class="form-control" id="Facilitator" name="Facilitator" style="width: 150px;"></select>
+      </span>
+    </div>
+  <p></p>
+	<div class="form-group" aling="left">
+    <span class="tab3">Start Time:</span>
+    <div>
+      <span class="tab3">
+        <input type="time" class="form-control" id="StartTime" name="StartTime" style="width: 150px;"></input>
+      </span>
+    </div>
+    <span class="tab3">End Time:</span>
+    <div>
+      <span class="tab3">
+        <input type="time" class="form-control" id="EndTime" name="EndTime" style="width: 150px;"></input>
+      </span>
+    </div>
+  </div>
+</form>
+<div>
+  <span class="tab3">
+    <button class="btn btn-primary" id="submitfacilitation">Sign up</button>
+  </span>
+  <span class="tab1"><span class="tab3">
+    <button class="btn btn-primary" id="deletefacilitation">Checkout</button>
+  </span></span>
+</div>
+
+</body>
+</html>
+</div>

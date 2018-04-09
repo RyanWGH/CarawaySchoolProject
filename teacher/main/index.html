@@ -32,55 +32,62 @@
 		</u1>
   	  </div>
   	</nav>
-      <div class="container">
-      <!-- Responsive calendar - START -->
-    	<div class="responsive-calendar">
-        <div class="controls">
-            <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
-            <h4><span data-head-year></span> <span data-head-month></span></h4>
-            <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
-        </div><hr/>
-        <div class="day-headers">
-          <div class="day header">Mon</div>
-          <div class="day header">Tue</div>
-          <div class="day header">Wed</div>
-          <div class="day header">Thu</div>
-          <div class="day header">Fri</div>
-          <div class="day header">Sat</div>
-          <div class="day header">Sun</div>
-        </div>
-        <div class="days" data-group="days">
-
-        </div>
+    <div class="container">
+    <!-- Responsive calendar - START -->
+    <div class="responsive-calendar" data-start-from-sunday="false">
+      <div class="controls">
+          <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
+          <h4><span data-head-year></span> <span data-head-month></span></h4>
+          <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
+      </div><hr/>
+      <div class="day-headers">
+        <div class="day header">Sun</div>
+        <div class="day header">Mon</div>
+        <div class="day header">Tue</div>
+        <div class="day header">Wed</div>
+        <div class="day header">Thu</div>
+        <div class="day header">Fri</div>
+        <div class="day header">Sat</div>
       </div>
-      <!-- Responsive calendar - END -->
-    </div>
-    <script src="/js/jquery.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/responsive-calendar.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $(".responsive-calendar").responsiveCalendar({
-          time: '2018-03',
-          events: {
-    "2018-03-03": {"url": "/teacher/DaySchedule"},
-	"2018-03-04": {"url": "/teacher/DaySchedule"},
-	"2018-03-05": {"url": "/teacher/DaySchedule"},
-	"2018-03-06": {"url": "/teacher/DaySchedule"},
-	"2018-03-07": {"url": "/teacher/DaySchedule"},
-	"2018-03-08": {"url": "/teacher/DaySchedule"},
-	"2018-03-09": {"url": "/teacher/DaySchedule"},
-	"2018-03-10": {"url": "/teacher/DaySchedule"},
-	"2018-03-12": {"url": "/teacher/DaySchedule"},
-	"2018-03-13": {"url": "/teacher/DaySchedule"},
-	"2018-03-14": {"url": "/teacher/DaySchedule"},
-	"2018-03-15": {"url": "/teacher/DaySchedule"},
-	"2018-03-16": {"url": "/teacher/DaySchedule"},
-	"2018-03-17": {"url": "/teacher/DaySchedule"},
+      <div class="days" data-group="days">
 
-  }
-        });
+      </div>
+    </div>
+    <!-- Responsive calendar - END -->
+  </div>
+  <script src="/js/jquery.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/responsive-calendar.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      let a = new Date();
+      $(".responsive-calendar").responsiveCalendar({
+        time: a.getFullYear() + '-' + ('0' + (a.getMonth()+1)).slice(-2),
+        startFromSunday: true,
+        monthChangeAnimation: false,
+        onInit: () => {
+          setTimeout(() => {
+            $('.day:not(.sat,.sun,.header,.not-current)').click(function() {
+              let item = $(this).children().first();
+              let date = item.attr("data-year") + '-' + item.attr("data-month") + '-' + item.attr("data-day");
+              localStorage.setItem("scheduleDate", date);
+              window.location.assign("/DaySchedule");
+            });
+          }, 4);
+        },
+        onMonthChange: () => {
+          setTimeout(() => {
+            $('.day:not(.sat,.sun,.header,.not-current)').click(function() {
+              console.log("c");
+              let item = $(this).children().first();
+              let date = item.attr("data-year") + '-' + item.attr("data-month") + '-' + item.attr("data-day");
+              localStorage.setItem("scheduleDate", date);
+              window.location.assign("/DaySchedule");
+            });
+          }, 4);
+        }
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
