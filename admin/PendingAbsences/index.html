@@ -15,34 +15,35 @@
 
 <body>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/main">Caraway</a>
-    </div>
-    <ul class="nav navbar-nav navbar-left">
-      <li><a href="/main">Home</a></li>
-      <li><a href="/monthSchedule">Schedule</a></li>
-      <li><a href="/totalStats">Total Statistics</a></li>
-      <li><a href="/weekStats">Family Statistics</a></li>
-      <li class="active"><a href="/PendingAbsences">Pending Absences</a></li>
-      <li><a href="/EditFamily">Edit Family</a></li>
-      <li><a href="/CreateFamily">Create Family</a></li>
-      <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
-      <li><a href="/CreateFacilitator">Create Facilitators</a></li>
-    </ul>
-	<u1 class="nav navbar-nav navbar-right">
-		<li><a href="/AccountSettings">Account Settings</a></li>
-		<li><a href="/logout">Logout</a></li>
-	</u1>
-  </div>
-</nav>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="/main">Caraway</a>
+	    </div>
+	    <ul class="nav navbar-nav navbar-left">
+	      <li><a href="/main">Home</a></li>
+	      <li><a href="/monthSchedule">Schedule</a></li>
+	      <li><a href="/weekStats">Stats</a></li>
+	      <li class="active"><a href="/PendingAbsences">Pending Absences</a></li>
+	      <li><a href="/EditFamily">Edit Family</a></li>
+	      <li><a href="/CreateFamily">Create Family</a></li>
+	      <li><a href="/AcceptFacilitator">Accept Facilitators</a></li>
+	      <li><a href="/CreateFacilitator">Create Facilitators</a></li>
+	      <li><a href="/AddChild">Add Child</a></li>
+
+	    </ul>
+		<u1 class="nav navbar-nav navbar-right">
+			<li><a href="/AccountSettings">Account Settings</a></li>
+			<li><a href="/logout">Logout</a></li>
+		</u1>
+	  </div>
+	</nav>
 
 	<link rel="stylesheet" href="/css/tablestyle.css">
 
 	<div id="page">
 	<div align="center"><font size=14><b>Pending Absences</b></font></div>
-	
+
 	<ul class="list-group">
 		<table id="AbsenceList">
 			<tr>
@@ -54,26 +55,42 @@
 				<th>Deny</th>
 			</tr>
 	</ul>
-	
+
 	</div>
 <script>
-	$( document ).ready(function(){
+	function approveAbsence(id) {
+		$.post("/ApproveAbsence", {absenceId: id}, (data) => {
+			window.location.assign("/PendingAbsences");
+		});
+	}
+
+	function denyAbsence(id) {
+		$.post("/DenyAbsence", {absenceId: id}, (data) => {
+			window.location.assign("/PendingAbsences");
+		});
+	}
+
+	$(document).ready(function(){
 			$.get("/getabsencelist", (data) => {
 				let absences = JSON.parse(data);
 				for (let i of absences) {
 					$("#AbsenceList").append(`<tr>
-						<td class="absence-${i.absenceid}">${i.absenceid}</td>
-						<td class="familyname-${i.absenceid}">${i.familyname}</td>
-						<td class="fromdate-${i.absenceid}">${(new Date(i.fromdate)).toDateString()}</td>
-						<td class="todate-${i.absenceid}">${(new Date(i.todate)).toDateString()}</td>
-						<td class="accept accept-${i.absenceid}"><button type="submit" value="Submit" class="btn btn-primary">Accept</button></td>
-						<td class="deny deny-${i.absenceid}"><button type="submit" value="Submit" class="btn btn-primary">Deny</button></td>
+						<td class="absenceid">${i.absenceid}</td>
+						<td class="familyname">${i.familyname}</td>
+						<td class="fromdate">${(new Date(i.fromdate)).toDateString()}</td>
+						<td class="todate">${(new Date(i.todate)).toDateString()}</td>
+						<td><button class="btn btn-primary approve">Approve</button></td>
+						<td><button class="btn btn-primary deny">Deny</button></td>
 						</tr>`);
 				}
-				
-				$('.accept').click(() => {
-					$(this).parent().find('.')
-				})
+
+				$('.approve').click(function() {
+					approveAbsence($(this).parent().parent().find('.absenceid').text());
+				});
+
+				$('.deny').click(function() {
+					denyAbsence($(this).parent().parent().find('.absenceid').text());
+				});
 			});
 	});
 	</script>
