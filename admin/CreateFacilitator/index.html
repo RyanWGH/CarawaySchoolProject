@@ -34,11 +34,11 @@
   		<li><a href="/logout">Logout</a></li>
   	</u1>
     </div>
-    
+
   </nav>
 
 <main role="main" class="container">
-<form action="/addNewFacilitator" method="post" id="CreateFacilitatorForm">
+<form id="CreateFacilitatorForm">
 	<div class="row">
 		<div class="col-md-3 mb-3">
   		  <label for="FirstName">First Name: </label>
@@ -68,19 +68,34 @@
 				  <label for="Password">Password: </label>
 				  <input type="password" class="form-control" id="Password" name="Password" form="CreateFacilitatorForm" style="width: 565px;">
 		  <p></p>
-	      <button type="submit" form="CreateFacilitatorForm" value="Submit"class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
+	      <button id="submit" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>
-        <script>
-        $(document).ready(() => {
-          console.log('a');
-          $.get("/getfamilies", (data) => {
-	         let names = JSON.parse(data);
-           console.log(names);
-				   $("#Family").empty();
-           for (let i of names) {
-            $("#Family").append(`<option value=${i.familyunitid}>${i.familyname}</option>`);
-           }
-	    });
-  });</script>
+<script>
+  $(document).ready(() => {
+    $.get("/getfamilies", (data) => {
+	     let names = JSON.parse(data);
+       $("#Family").empty();
+       for (let i of names) {
+         $("#Family").append(`<option value=${i.familyunitid}>${i.familyname}</option>`);
+       }
+     });
+
+     $('#submit').click(() => {
+       $.post('/addNewFacilitator', {
+         FirstName: $("#FirstName").val(),
+         LastName: $("#LastName").val(),
+         Family: $("#Family").val(),
+         Phone: $("#Phone").text(),
+         Email: $("#Email").text(),
+         Password: $("#Password").val()
+       }, (data) => {
+         if (!data.status) {
+           alert("Facilitator successfully created");
+           window.location.assign("/CreateFacilitator");
+         }
+       });
+     });
+   });
+</script>
 </body>
 </main>

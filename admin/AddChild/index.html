@@ -34,11 +34,11 @@
   		<li><a href="/logout">Logout</a></li>
   	</u1>
     </div>
-    
+
   </nav>
 
 <main role="main" class="container">
-<form method="post" id="AddChildForm">
+<form id="AddChildForm">
 	<div class="row">
 		<div class="col-md-3 mb-3">
   		  <label for="FirstName">First Name: </label>
@@ -63,7 +63,7 @@
 		  </div>
 	  </div>
 	  <p></p>
-	      <button type="submit" formaction="/addChild" method="post" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
+	      <button id="submit" class="btn btn-primary btn-lg" style="width: 565px; height: 50px;">Submit</button>
 	  	  </div>
 </main>
 <script>
@@ -84,6 +84,20 @@
 			}
 			$("#Room").change();
 		});
+
+    $("#submit").click(() => {
+      $.post("/addChild", {
+        FirstName: $("#FirstName").val(),
+        LastName: $("#LastName").val(),
+        Room: $("#Room").val(),
+        Family: $("#Family").val()
+      }, (data) => {
+        if (!data.status) {
+          alert("Child successfully added");
+          window.location.assign("/AddChild");
+        }
+      })
+    });
 	});
 	</script>
 </body>

@@ -260,11 +260,15 @@ const userEndpoints = {
 
       req.on("end", () => {
         let data = qs.parse(body);
-        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
-            if (!err) {
+        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
+          if (!err) {
+            if (message) {
+              res.end(JSON.stringify({status: message}));
+            } else {
               res.end(JSON.stringify({status: 0}));
             }
-            });
+          }
+        });
     });
 
     return 1;
@@ -779,9 +783,13 @@ const teacherEndpoints = {
 
     req.on("end", () => {
       let data = qs.parse(body);
-      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
         if (!err) {
-          res.end(JSON.stringify({status: 0}));
+          if (message) {
+            res.end(JSON.stringify({status: message}));
+          } else {
+            res.end(JSON.stringify({status: 0}));
+          }
         }
         });
     });
@@ -888,9 +896,13 @@ const boardEndpoints = {
 
     req.on("end", () => {
       let data = qs.parse(body);
-      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
         if (!err) {
-          res.end(JSON.stringify({status: 0}));
+          if (message) {
+            res.end(JSON.stringify({status: message}));
+          } else {
+            res.end(JSON.stringify({status: 0}));
+          }
         }
       });
     });
@@ -1037,14 +1049,14 @@ const adminEndpoints = {
       req.on("end", () => {
         let data = qs.parse(body);
         updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
-            if (!err) {
-              if(message){
-                res.end(message);
-              } else{
-              res.end({status: 0});
-              }
-              }
-            });
+          if (!err) {
+            if (message) {
+              res.end(JSON.stringify({status: message}));
+            } else {
+              res.end(JSON.stringify({status: 0}));
+            }
+          }
+        });
     });
 
     return 1;
