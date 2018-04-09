@@ -28,21 +28,37 @@
 </nav>
 
 <main role="main" class="container">
-<form action=/AccountSettings method="post" id="EditAccountForm">
+<form id="EditAccountForm">
   <p></p>
-  <label for="LastName">First Name: </label>
-  <input type="text" class="form-control" id="LastName" name="FirstName" form="EditAccountForm" style="width: 275px;">
+  <label for="FirstName">First Name: </label>
+  <input type="text" class="form-control" id="FirstName" name="FirstName" form="EditAccountForm" style="width: 275px;">
   <p></p>
-  <label for="FirstName">Last Name: </label>
-  <input type="text" class="form-control" id="FirstName" name="LastName" form="EditAccountForm" style="width: 275px;">
+  <label for="LastName">Last Name: </label>
+  <input type="text" class="form-control" id="LastName" name="LastName" form="EditAccountForm" style="width: 275px;">
   <p></p>
 		<label for="Phone">Phone Number: </label>
 		<input type="text" class="form-control" id="Phone" name="Phone" form="EditAccountForm" style="width: 275px;">
 		  <p></p>
-	      <button type="submit" id = "SubmitButton" formaction="/EditAccountSettings" form="EditAccountForm" method="post" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
+	      <button id="submit" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Submit</button>
 		  <p></p>
-		  <button type="button" onclick="location.href= '	/ChangePassword'" id = "PasswordButton" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
+		  <button type="button" onclick="location.href='/ChangePassword'" id="pwbutton" class="btn btn-primary btn-lg" style="width: 275px; height: 50px;">Change Password</button>
 	  	  </div>
 </main>
+<script>
+$(document).ready(function() {
+  $("#submit").click(() => {
+    $.post("/EditAccountSettings", {
+      FirstName: $("#FirstName").val(),
+      LastName: $("#LastName").val(),
+      Phone: $("#Phone").val()
+    }, (data) => {
+      if (!data.status) {
+        alert("Account information saved");
+        window.location.assign("/AccountSettings");
+      }
+    });
+  });
+});
+</script>
 </body>
 </html>
