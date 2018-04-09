@@ -59,19 +59,21 @@
 	</div>
 
 	<script>
-  
+
   function approveFacilitator(id) {
 		$.post("/ApproveFacilitator", {pfId: id}, (data) => {
+      alert("New facilitator approved");
 			window.location.assign("/AcceptFacilitator");
 		});
 	}
 
 	function denyFacilitator(id) {
 		$.post("/DenyFacilitator", {pfId: id}, (data) => {
+      alert("New facilitator not approved");
 			window.location.assign("/AcceptFacilitator");
 		});
 	}
-  
+
 		$( document ).ready(function(){
 				$.get("/getPendingFacilitatorList", (data) => {
 					let facilitators = JSON.parse(data);
@@ -82,12 +84,12 @@
 							<td class="lastname-${i.pfid}">${i.lastname}</td>
 							<td class="phone-${i.pfid}">${i.phone}</td>
 							<td class="email-${i.pfid}">${i.email}</td>
-							<td class="accept accept-${i.pfid}"><button type="submit" value="Submit" class="btn btn-primary approve">Accept</button></td>
-							<td class="deny deny-${i.pfid}"><button type="submit" value="Submit" class="btn btn-primary deny">Deny</button></td>
+							<td><button type="submit" value="Submit" class="btn btn-primary approve">Accept</button></td>
+							<td><button type="submit" value="Submit" class="btn btn-primary deny">Deny</button></td>
 							</tr>`);
 					}
 				});
-					
+
           $('.approve').click(function() {
 					approveFacilitator($(this).parent().parent().find('.pfid').text());
 				});
@@ -95,7 +97,7 @@
 				$('.deny').click(function() {
 					denyFacilitator($(this).parent().parent().find('.pfid').text());
 				});
-        
+
 		});
 		</script>
 	</body>

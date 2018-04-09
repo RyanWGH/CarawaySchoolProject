@@ -134,12 +134,6 @@ const generalEndpoints = {
     });
 
     return 1;
-  },
-
-  "/familytest": (req, res) => {
-    console.log('familytest');
-    getFamilyNames(() => {});
-    return 1;
   }
 };
 
@@ -266,11 +260,15 @@ const userEndpoints = {
 
       req.on("end", () => {
         let data = qs.parse(body);
-        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
-            if (!err) {
+        updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
+          if (!err) {
+            if (message) {
+              res.end(JSON.stringify({status: message}));
+            } else {
               res.end(JSON.stringify({status: 0}));
             }
-            });
+          }
+        });
     });
 
     return 1;
@@ -785,9 +783,13 @@ const teacherEndpoints = {
 
     req.on("end", () => {
       let data = qs.parse(body);
-      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
         if (!err) {
-          res.end(JSON.stringify({status: 0}));
+          if (message) {
+            res.end(JSON.stringify({status: message}));
+          } else {
+            res.end(JSON.stringify({status: 0}));
+          }
         }
         });
     });
@@ -894,9 +896,13 @@ const boardEndpoints = {
 
     req.on("end", () => {
       let data = qs.parse(body);
-      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err) => {
+      updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
         if (!err) {
-          res.end(JSON.stringify({status: 0}));
+          if (message) {
+            res.end(JSON.stringify({status: message}));
+          } else {
+            res.end(JSON.stringify({status: 0}));
+          }
         }
       });
     });
@@ -1043,14 +1049,14 @@ const adminEndpoints = {
       req.on("end", () => {
         let data = qs.parse(body);
         updatePassword(user.userid, data.CurrentPassword, data.NewPassword, data.RepeatPassword, (err, message) => {
-            if (!err) {
-              if(message){
-                res.end(message);
-              } else{
-              res.end({status: 0});
-              }
-              }
-            });
+          if (!err) {
+            if (message) {
+              res.end(JSON.stringify({status: message}));
+            } else {
+              res.end(JSON.stringify({status: 0}));
+            }
+          }
+        });
     });
 
     return 1;
@@ -1752,12 +1758,7 @@ const adminEndpoints = {
 };
 
 function getFamilyNames(callback) {
-  db.query(`SELECT firstname, lastname, familyunitid
-    from familymembers as f1, users as f2
-    where f1.userid = f2.userid and f1.userid in
-    (select distinct userid from familymembers
-    where familyunitid = f1.familyunitid
-    limit 1) order by lastname`, (err, res) => {
+  db.query(`SELECT familyname, familyunitid from familyunits`, (err, res) => {
       if (err) {
         console.log(err.stack);
         callback(true);
