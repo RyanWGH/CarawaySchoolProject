@@ -60,12 +60,14 @@
 <script>
 	function approveAbsence(id) {
 		$.post("/ApproveAbsence", {absenceId: id}, (data) => {
+			alert("Absence approved");
 			window.location.assign("/PendingAbsences");
 		});
 	}
 
 	function denyAbsence(id) {
 		$.post("/DenyAbsence", {absenceId: id}, (data) => {
+			alert("Absence denied");
 			window.location.assign("/PendingAbsences");
 		});
 	}
@@ -83,6 +85,7 @@
 						<td><button class="btn btn-primary deny">Deny</button></td>
 						</tr>`);
 				}
+			});
 
 				$('.approve').click(function() {
 					approveAbsence($(this).parent().parent().find('.absenceid').text());
@@ -91,7 +94,6 @@
 				$('.deny').click(function() {
 					denyAbsence($(this).parent().parent().find('.absenceid').text());
 				});
-			});
 	});
 	</script>
 </body>
