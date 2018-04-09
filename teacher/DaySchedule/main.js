@@ -117,9 +117,6 @@ jQuery(document).ready(function($){
 		//this.modalHeader.find('.event-date').text(event.find('.event-date').text());
 		this.modal.attr('data-event', event.parent().attr('data-event'));
 
-		//update event content
-			//once the event content has been loaded
-
 		this.element.addClass('modal-is-open');
 
 		setTimeout(function(){

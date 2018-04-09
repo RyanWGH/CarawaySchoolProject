@@ -118,28 +118,16 @@ jQuery(document).ready(function($){
 		this.modal.attr('data-event', event.parent().attr('data-event'));
 
 		//update event content
-		this.modalBody.find('.event-info').load("/admin/DaySchedule/" + event.parent().attr('data-content')+'.html .event-info > *', function(data){
+		this.modalBody.find('.event-info').load("/user/DaySchedule/signup.html .event-info > *", function(data){
 			//once the event content has been loaded
 			self.element.addClass('content-loaded');
 
-			$("#Family").change(() => {
-				let family = $("#Family").val();
-				$.post("/getfacilitators", {familyid: family}, (data) => {
-					let names = JSON.parse(data);
-					$("#Facilitator").empty();
-					for (let i of names) {
-						$("#Facilitator").append(`<option value=${i.userid}>${i.firstname} ${i.lastname}</option>`);
-					}
-				});
-			});
-
-			$.get("/getfamilies", (data) => {
+			$.get("/getfacilitators", (data) => {
 	      let names = JSON.parse(data);
-				$("#Family").empty();
+				$("#Facilitator").empty();
 				for (let i of names) {
-					$("#Family").append(`<option value=${i.familyunitid}>${i.familyname}</option>`);
+					$("#Facilitator").append(`<option value=${i.userid}>${i.firstname} ${i.lastname}</option>`);
 				}
-				$("#Family").change();
 	    });
 
 			$("#submitfacilitation").click(() => {
@@ -155,7 +143,7 @@ jQuery(document).ready(function($){
 					year: date.getUTCFullYear()
 				}, (data) => {
 					if (!data.status) {
-						window.location.assign("/DaySchedule");
+						window.location.assign('/DaySchedule');
 					}
 				});
 			});
@@ -173,7 +161,7 @@ jQuery(document).ready(function($){
 					year: date.getUTCFullYear()
 				}, (data) => {
 					if (!data.status) {
-						window.location.assign("/DaySchedule");
+						window.location.assign('/DaySchedule');
 					}
 				});
 			});

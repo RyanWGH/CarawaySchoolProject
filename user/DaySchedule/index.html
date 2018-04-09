@@ -19,16 +19,16 @@
 	    <div class="navbar-header">
 	      <a class="navbar-brand" href="/main">Caraway</a>
 	    </div>
-	    <ul class="nav navbar-nav">
+	    <ul class="nav navbar-nav navbar-left">
 	      <li><a href="/main">Home</a></li>
-	      <li class="active"><a href="/monthSchedule">Schedule</a></li>
-	      <li><a href="/donate">Donate Hours</a></li>
+	      <li><a href="/monthSchedule">Schedule</a></li>
 	      <li><a href="/requests">Request Absence</a></li>
+	      <li><a href="/donate">Donate Hours</a></li>
 	      <li><a href="/CreateFacilitator">Create Facilitator</a></li>
 	      <li><a href="/contact">Contact</a></li>
 	    </ul>
 		<u1 class="nav navbar-nav navbar-right">
-			<li><a href="/AccountSettings">Account Settings</a></li>
+			<li class="active"><a href="/AccountSettings">Account Settings</a></li>
 			<li><a href="/logout">Logout</a></li>
 		</u1>
 	  </div>
@@ -181,7 +181,7 @@
 <script>
 	if( !window.jQuery ) document.write('<script src="/js/jquery-3.0.0.min.js"><\/script>');
 </script>
-<script src="/admin/DaySchedule/main.js"></script> <!-- Resource jQuery -->
+<script src="/user/DaySchedule/main.js"></script> <!-- Resource jQuery -->
 <script>
 	function applyDate(date) {
 		$("#schedule-date").text(date.toDateString());
