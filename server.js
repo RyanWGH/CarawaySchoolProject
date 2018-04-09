@@ -134,12 +134,6 @@ const generalEndpoints = {
     });
 
     return 1;
-  },
-
-  "/familytest": (req, res) => {
-    console.log('familytest');
-    getFamilyNames(() => {});
-    return 1;
   }
 };
 
@@ -1752,12 +1746,7 @@ const adminEndpoints = {
 };
 
 function getFamilyNames(callback) {
-  db.query(`SELECT firstname, lastname, familyunitid
-    from familymembers as f1, users as f2
-    where f1.userid = f2.userid and f1.userid in
-    (select distinct userid from familymembers
-    where familyunitid = f1.familyunitid
-    limit 1) order by lastname`, (err, res) => {
+  db.query(`SELECT familyname, familyunitid from familyunits`, (err, res) => {
       if (err) {
         console.log(err.stack);
         callback(true);
