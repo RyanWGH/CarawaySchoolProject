@@ -6,6 +6,7 @@ const qs = require("querystring");
 const cookie = require("cookie");
 const crypto = require("crypto");
 const { Client } = require("pg");
+const async = require("async");
 
 const db = new Client();
 db.connect();
@@ -546,6 +547,118 @@ const userEndpoints = {
     return 1;
   },
 
+
+  "/getDonatedMonthlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getDonatedHoursMonthly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
+    "/getReceivedMonthlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getReceivedHoursMonthly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
+
+  "/getDonatedYearlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getDonatedHoursYearly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
+    "/getReceivedYearlystats": (req, res, role, user) => {
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getFamilyId(user.userid, (err, userFamilyId) => {
+        if (err) {
+          console.log(err.stack);
+          return;
+        } else{
+          getReceivedHoursYearly(userFamilyId, (err, stats) => {
+            if (!err) {
+              res.end(JSON.stringify(stats));
+            }
+          });
+        }
+      });
+    });
+    return 1;
+  },
+
    "/getfacilitations": (req, res, role) => {
      let body = '';
 
@@ -990,6 +1103,373 @@ const adminEndpoints = {
     return 1;
   },
 
+
+  "/getWeeklyFamilyStats": (req, res, role) => {
+    var famTimes = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          console.log(FAMS);
+          async.each(FAMS, function(fam, cb) {
+            getFamilyWeeklyTimes(fam.familyunitid, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                famTimes[fam.familyunitid] = {name: fam.familyname, totalHours: sum};
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(famTimes));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getMonthlyFamilyStats": (req, res, role) => {
+    var famTimes = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          console.log(FAMS);
+          async.each(FAMS, function(fam, cb) {
+            getFamilyMonthlyTimes(fam.familyunitid, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                famTimes[fam.familyunitid] = {name: fam.familyname, totalHours: sum};
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(famTimes));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+    "/getYearlyFamilyStats": (req, res, role) => {
+    var famTimes = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          console.log(FAMS);
+          async.each(FAMS, function(fam, cb) {
+            getFamilyYearlyTimes(fam.familyunitid, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                famTimes[fam.familyunitid] = {name: fam.familyname, totalHours: sum};
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(famTimes));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getDonatedWeeklystats": (req, res, role) => {
+    var donated = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getDonatedHoursWeekly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                donated[fam.familyunitid] = stats;
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(donated));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getReceivedWeeklystats": (req, res, role) => {
+    var received = {};
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getReceivedHoursWeekly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                received[fam.familyunitid] = stats;
+                console.log(stats);
+                console.log(received);
+                console.log(received[fam.familyunitid]);
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(received));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getDonatedMonthlystats": (req, res, role) => {
+    var donated = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getDonatedHoursMonthly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                donated[fam.familyunitid] = stats;
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(donated));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getReceivedMonthlystats": (req, res, role) => {
+    var received = {};
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getReceivedHoursMonthly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                received[fam.familyunitid] = stats;
+                console.log(stats);
+                console.log(received);
+                console.log(received[fam.familyunitid]);
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(received));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getDonatedYearlystats": (req, res, role) => {
+    var donated = {};
+    var i;
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getDonatedHoursYearly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                donated[fam.familyunitid] = stats;
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(donated));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
+  "/getReceivedYearlystats": (req, res, role) => {
+    var received = {};
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+      getAllFamilyIds((err, FAMS) => {
+        if (!err) {
+          async.each(FAMS, function(fam, cb) {
+            getReceivedHoursYearly(fam.familyunitid, (err, stats) => {
+              if (!err) {
+                received[fam.familyunitid] = stats;
+                console.log(stats);
+                console.log(received);
+                console.log(received[fam.familyunitid]);
+                cb(null);
+              } else {
+                cb(1);
+              }
+            });
+          }, (err) => {
+            if (err) {
+              console.log("err here");
+            } else {
+              res.end(JSON.stringify(received));
+            }
+          });
+        }
+      });
+    });    
+    return 1;
+  },
+
   "/getRooms": (req, res, role) => {
     getRoomInfo((err, rooms) => {
       if (!err) {
@@ -1224,6 +1704,65 @@ function getNewFamilyNames(callback) {
     });
 }
 
+function getFamilyWeeklyTimes(famid, callback) {
+  console.log(famid);
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  console.log("THIS IS FIRST AND LAST DAY");
+  console.log(firstday.getDate(), lastday.getDate());
+  console.log(firstday.getMonth(), lastday.getMonth());
+  console.log(firstday.getFullYear(), lastday.getFullYear());
+  console.log("-------");
+  db.query(`SELECT timestart, timeend FROM facilitations, familymembers WHERE familymembers.userid = facilitations.userid AND familyunitid=${famid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`, (err, res) => {
+    if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
+function getFamilyMonthlyTimes(famid, callback) {
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  console.log("THIS IS FIRST AND LAST DAY");
+  console.log(firstday.getDate(), lastday.getDate());
+  console.log(firstday.getMonth(), lastday.getMonth());
+  console.log(firstday.getFullYear(), lastday.getFullYear());
+  console.log("-------");
+  db.query(`SELECT timestart, timeend FROM facilitations, familymembers WHERE familymembers.userid = facilitations.userid AND familyunitid=${famid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1}`, (err, res) => {
+    if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
+function getFamilyYearlyTimes(famid, callback) {
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  console.log("THIS IS FIRST AND LAST DAY");
+  console.log(firstday.getDate(), lastday.getDate());
+  console.log(firstday.getMonth(), lastday.getMonth());
+  console.log(firstday.getFullYear(), lastday.getFullYear());
+  console.log("-------");
+  db.query(`SELECT timestart, timeend FROM facilitations, familymembers WHERE familymembers.userid = facilitations.userid AND familyunitid=${famid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()}`, (err, res) => {
+    if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, res.rows);
+      }
+    });
+}
+
+
 function getFacilitatorNames(familyid, callback) {
   db.query(`SELECT firstname, lastname, f2.userid
     FROM familymembers as f1, users as f2
@@ -1342,7 +1881,10 @@ function addChild(first, last, family, room, callback){
 
 function getDonatedHoursWeekly(familyunitid, callback){
   console.log()
-  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid}`,
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1355,7 +1897,10 @@ function getDonatedHoursWeekly(familyunitid, callback){
 }
 
 function getReceivedHoursWeekly(familyunitid, callback){
-  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid}`,
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid} AND day BETWEEN ${firstday.getDate()} AND ${lastday.getDate()} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1367,7 +1912,10 @@ function getReceivedHoursWeekly(familyunitid, callback){
 }
 
 function getTotalHoursWeekly(callback){
-  db.query(`SELECT * from Donations`,
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS totalHours from Donations`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1379,7 +1927,69 @@ function getTotalHoursWeekly(callback){
 }
 
 
+function getDonatedHoursMonthly(familyunitid, callback){
+  console.log()
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        console.log("TESTING FOR HOURS");
+        callback(null, result.rows);
+      }
+    });
+}
 
+function getReceivedHoursMonthly(familyunitid, callback){
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid} AND month BETWEEN ${firstday.getMonth()+1} AND ${lastday.getMonth()+1} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
+
+function getDonatedHoursYearly(familyunitid, callback){
+  console.log()
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS donatedSum FROM Donations WHERE fromid=${familyunitid} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        console.log("TESTING FOR HOURS");
+        callback(null, result.rows);
+      }
+    });
+}
+
+function getReceivedHoursYearly(familyunitid, callback){
+  var curr = new Date;
+  var firstday = new Date(curr.setDate(curr.getDate() - curr.getDay()));
+  var lastday = new Date(curr.setDate(curr.getDate() - curr.getDay()+6));
+  db.query(`SELECT SUM(hours) AS receivedSum from Donations WHERE toid=${familyunitid} AND year BETWEEN ${firstday.getFullYear()} AND ${lastday.getFullYear()}`,
+    (err, result) => {
+      if (err) {
+        console.log(err.stack);
+        callback(true);
+      } else {
+        callback(null, result.rows);
+      }
+    });
+}
 function getAbsences(callback){
   db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
     (err, result) => {
@@ -1392,8 +2002,8 @@ function getAbsences(callback){
     });
 }
 
-function getFamStats(callback){
-    db.query(`SELECT absenceid, familyname, todate, fromdate from Absences, familyunits WHERE familyunits.familyunitid = Absences.familyunitid AND status = 1`,
+function getFamStats(famID, callback){
+    db.query(`SELECT timestart, timeend, day, month, year FROM facilitations, familymembers WHERE facilitations.userid = familymembers.userid AND familymembers.familyunitid = ${famID}`,
     (err, result) => {
       if (err) {
         console.log(err.stack);
@@ -1470,6 +2080,17 @@ function getFamilyId (userId, callback){
    });
 }
 
+function getAllFamilyIds (callback){
+  db.query(`select DISTINCT familyunits.familyunitid, familyname from familymembers, familyunits WHERE familyunits.familyunitid = familymembers.familyunitid`, (err, res) => {
+   if (err) {
+      console.log(err.stack);
+      callback(true);
+   }  else {
+      callback(null, res.rows);
+    }
+   });
+}
+
 //Updating the weekly hours for the donating family and the recieving family
 function donateHours(donatingFamilyId, Time, targetFamilyId, day, month, year, callback) {
 	console.log("Donating Hours");
@@ -1543,6 +2164,15 @@ function serveFile(req, res, pathname) {
     });
   });
 }
+
+
+function calculateHours(timestart, timeend){
+    var Start = new Date("01/01/2018 " + timestart);
+    var End = new Date("01/01/2018 " + timeend);
+
+    var Diff = (End - Start)/(1000*60*60);
+    return Diff;
+  }
 
 function encrypt(text) {
   let cipher = crypto.createCipher(ALGORITHM, SECRET);

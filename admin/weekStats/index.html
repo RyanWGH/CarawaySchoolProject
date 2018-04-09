@@ -46,7 +46,6 @@
 	<ul class="list-group">
 		<table id="familystats">
 			<tr>
-				<th>ID</th>
 				<th>Name</th>
 				<th>Weekly Hours</th>
 				<th>Weekly Donated Hours</th>
@@ -62,16 +61,85 @@
 	
 	</div>
 <script>
+	function e(s) {
+		return s == null ? 0 : parseFloat(s);
+	}
+	
 	$( document ).ready(function(){
-			$.get("/getweekstats", (data) => {
-				let stats = JSON.parse(data);
-				for (let i of stats) {
-					$("#familystats").append(`<tr>
-						<td>${i.familyunitid}</td>
-						<td>${i.familyname}</td>
-						</tr>`);
-				}
+			$.get("/getWeeklyFamilyStats", (data) => {
+				let weekStats = JSON.parse(data);
+				$.get("/getMonthlyFamilyStats", (data) => {
+					let monthStats = JSON.parse(data);
+					$.get("/getYearlyFamilyStats", (data) => {
+						let yearStats = JSON.parse(data);
+						$.get("/getDonatedWeeklystats", (data) => {
+							let donatedweekly = JSON.parse(data);
+							$.get("/getReceivedWeeklystats", (data) => {
+								let receivedweekly = JSON.parse(data);
+								$.get("/getReceivedWeeklystats", (data) => {
+									let donatedmonthly = JSON.parse(data);
+									$.get("/getReceivedWeeklystats", (data) => {
+										let receivedmonthly = JSON.parse(data);
+										$.get("/getReceivedWeeklystats", (data) => {
+											let donatedyearly = JSON.parse(data);
+											$.get("/getReceivedWeeklystats", (data) => {
+												let receivedyearly = JSON.parse(data);
+												let totals = {
+													weekTotal: 0,
+													weekdonated: 0,
+													weekreceived: 0,
+													monthTotal: 0,
+													monthdonated: 0,
+													monthreceived: 0,
+													yearTotal: 0,
+													yeardonated: 0,
+													yearreceived: 0,
+												};
+							for (let i in weekStats) {
+								totals['weekTotal']+=e(weekStats[i].totalHours);
+								totals['weekdonated']+=e(donatedweekly[i][0].donatedsum);
+								totals['weekreceived']+=e(receivedweekly[i][0].receivedsum);
+								totals['monthTotal']+=e(monthStats[i].totalHours);
+								totals['monthdonated']+=e(donatedmonthly[i][0].donatedsum);
+								totals['monthreceived']+=e(receivedmonthly[i][0].receivedsum);
+								totals['yearTotal']+=e(yearStats[i].totalHours);
+								totals['yeardonated']+=e(donatedyearly[i][0].donatedsum);
+								totals['yearreceived']+=e(receivedyearly[i][0].receivedsum);
+								
+								$("#familystats").append(`<tr>
+									<td>${weekStats[i].name}</td>
+									<td>${e(weekStats[i].totalHours).toFixed(2)}</td>
+									<td>${e(donatedweekly[i][0].donatedsum).toFixed(2)}</td>
+									<td>${e(receivedweekly[i][0].receivedsum).toFixed(2)}</td>
+									<td>${e(monthStats[i].totalHours).toFixed(2)}</td>
+									<td>${e(donatedmonthly[i][0].donatedsum).toFixed(2)}</td>
+									<td>${e(receivedmonthly[i][0].receivedsum).toFixed(2)}</td>
+									<td>${e(yearStats[i].totalHours).toFixed(2)}</td>
+									<td>${e(donatedyearly[i][0].donatedsum).toFixed(2)}</td>
+									<td>${e(receivedyearly[i][0].receivedsum).toFixed(2)}</td>
+									</tr>`);
+								}
+								$("#familystats").append(`<tr>
+									<td><b>TOTAL</b></td>
+									<td>${totals['weekTotal'].toFixed(2)}</td>
+									<td>${totals['weekdonated'].toFixed(2)}</td>
+									<td>${totals['weekreceived'].toFixed(2)}</td>
+									<td>${totals['monthTotal'].toFixed(2)}</td>
+									<td>${totals['monthdonated'].toFixed(2)}</td>
+									<td>${totals['monthreceived'].toFixed(2)}</td>
+									<td>${totals['yearTotal'].toFixed(2)}</td>
+									<td>${totals['yeardonated'].toFixed(2)}</td>
+									<td>${totals['yearreceived'].toFixed(2)}</td>
+									</tr>`)
+							});
+						});
+						});
+						});
+						});
+						});
+				});
 			});
+		});
 	});
 	</script>
 </body>
