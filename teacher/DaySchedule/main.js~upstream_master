@@ -109,17 +109,16 @@ jQuery(document).ready(function($){
 		var self = this;
 		var mq = self.mq();
 		this.animating = true;
+		let roomid = event.parent().attr('data-event').slice(-1);
+		localStorage.setItem("roomId", roomid);
 
 		//update event name and time
-		this.modalHeader.find('.event-name').text(event.find('.event-name').text());
-		this.modalHeader.find('.event-date').text(event.find('.event-date').text());
+		this.modalHeader.find('.event-name').html($(event[0]).html());
+		//this.modalHeader.find('.event-date').text(event.find('.event-date').text());
 		this.modal.attr('data-event', event.parent().attr('data-event'));
 
 		//update event content
-		this.modalBody.find('.event-info').load("/user/DaySchedule/" + event.parent().attr('data-content')+'.html .event-info > *', function(data){
 			//once the event content has been loaded
-			self.element.addClass('content-loaded');
-		});
 
 		this.element.addClass('modal-is-open');
 
