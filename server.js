@@ -506,6 +506,106 @@ const userEndpoints = {
     return 1;
   },
 
+
+  "/getWeeklyTotalStats": (req, res, role, user) => {
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+    getFamilyId(user.userid, (err, userFamilyId) => {
+        if (!err) {
+            getFamilyWeeklyTimes(userFamilyId, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                console.log("THIS IS THE SUM THAT WE ARE LOOKING AT");
+                console.log(sum);
+                res.end(JSON.stringify(sum));
+              }
+            });
+          }
+      });
+    });    
+    return 1;
+  },
+
+    "/getMonthlyTotalStats": (req, res, role, user) => {
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+    getFamilyId(user.userid, (err, userFamilyId) => {
+        if (!err) {
+            getFamilyMonthlyTimes(userFamilyId, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                console.log("THIS IS THE SUM THAT WE ARE LOOKING AT");
+                console.log(sum);
+                res.end(JSON.stringify(sum));
+              }
+            });
+          }
+      });
+    });    
+    return 1;
+  },
+
+    "/getYearlyTotalStats": (req, res, role, user) => {
+    var diff = 0;
+    let body = '';
+    req.on("data", (data) => {
+      body += data;
+      if (body.length > 1e6) {
+        req.connection.destroy();
+      }
+    });
+
+    req.on("end", () => {
+      let data = qs.parse(body);
+
+    getFamilyId(user.userid, (err, userFamilyId) => {
+        if (!err) {
+            getFamilyYearlyTimes(userFamilyId, (err, times) => {
+              if (!err) {
+                var sum = 0;
+                for (var j of times) {
+                  diff = calculateHours(j.timestart, j.timeend);
+                  sum += diff;
+                }
+                console.log("THIS IS THE SUM THAT WE ARE LOOKING AT");
+                console.log(sum);
+                res.end(JSON.stringify(sum));
+              }
+            });
+          }
+      });
+    });    
+    return 1;
+  },
+
   "/getDonatedWeeklystats": (req, res, role, user) => {
     let body = '';
     req.on("data", (data) => {
